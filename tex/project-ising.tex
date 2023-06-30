@@ -1,0 +1,105 @@
+\documentclass[11pt, preprint]{aastex}
+
+\include{computational_defs}
+
+\begin{document}
+
+\title{\bf Computational Physics Project / 2D Ising Models}
+
+This project focuses on the simulation through Monte Carlo methods of
+2D Ising models for magnetization. This project is similar to Exercise
+10.9 in Newman.  The presentation here comes mostly from the
+computational physics textbook of Landau, P{\'a}ez, \& Bordeianu
+(not {\it the} Landau).
+
+These model a magnetic material as a 2D lattice of atoms whose
+magnetic moments can either be up or down. These are thermodynamic
+systems, so depending on the temperature, there is more or less random
+flipping of these moments.
+
+Each neighboring pair of atoms (labeled $i$ and $j$, where $j$ is a
+neighbor in $x$ or in $y$, but not along the diagonal) contributes to
+the total energy of the system an amount:
+\begin{equation}
+  E = - J s_{i} s_{j}
+\end{equation}
+Aligned moments are lower energy, therefore are the preferred state.
+
+Since the system is thermodynamic, the spins will sometimes flip
+randomly. Flips that happen to be favorable happen at a constant rate,
+but those that are unfavorable do so at a reduced rate; reduced
+specifically by the Boltzman factor:
+\begin{equation}
+  R = \exp\left(-\Delta E /k T\right)
+\end{equation}
+
+We are interested in what happens to the magnetization of a system as
+a function of temperature.  The magnetization can be defined as :
+\begin{equation}
+M = \sum_i s_i
+\end{equation}
+
+It happens that in this case there is a simple analytic form for the
+magnetization as a function of temperature:
+\begin{equation}
+  M(T) = \left\{
+  \begin{array}{ll}
+  0 & T > T_c \cr
+  \frac{(1+z^2)^{1/4} (1-6 z^2 +z^4)^{1/8}}{\sqrt{1-z^2}} & T < T_c
+    \end{array}\right. 
+\end{equation}
+For $kT_c \approx 2.269185 J$ and $z=\exp(-2J/kT)$.
+
+\section{Prep work}
+
+\begin{itemize}
+\item Explain in words why you should find $M\sim 0$ for sufficiently
+  high $T$, and why you should find an extremal $M$ (all spins
+  aligned) for sufficiently low $T$.
+\item Read and briefly explain the Metropolis algorithm described in
+  Newman section 10.3.2. We have not discussed this in class!
+\item Rescale the problem so that you only need one physical constant
+  (which will be a combination of $J$, $k$, and $T$). Below, perform
+  the numerical analysis in those rescaled units.
+\end{itemize}
+
+\section{Writing the code}
+
+\begin{itemize}
+\item Write a piece of code to calculate the total energy of the
+  system (similar to part (a) of Exercise 10.9). 
+\item Write into code the Metropolis algorithm found in section 10.3.2
+  of Newman. Note that you do {\it not} need to recalculate the full
+  energy of the system at each trial, since most of it is unchanged
+  (i.e. you only need the terms involving the lattice atom you
+  picked). Use periodic boundary conditions.
+\end{itemize}
+
+\section{Testing and running the code}
+
+\begin{itemize}
+\item Now initialize your system to start with a fully magnetized (all
+  spins aligned, with $s_i = 1$) system, at $T=0$. Raise the
+  temperature in small steps, and after each step run the Metropolis
+  algorithm for long enough that the energy and magnetization seem to
+  have converged. Use the final conditions of one temperature step as
+  initial conditions for the next temperature step.
+\item Plot the magnetization and energy as a function of temperature
+  and compare the magnetization to the analytic prediction.
+\item What is the physical meaning of the slope of the energy versus
+  temperature?  Can you describe in words what this slope means in
+  terms of how much work it is to raise the temperature?
+\item If you add a term to $E$ that accounts for an external magnetic
+  field:
+  \begin{equation}
+    -H \sum_i s_i
+  \end{equation}
+  how does this change the behavior of the system when you start with
+  $T=0$ and raise the temperature?  Try both $H$ positive and
+  negative.
+\item Try a few runs where you start with random spin orientations and
+  $T\gg T_c$, and cool the system down. What do you notice about the
+  final result? What if you include a non-zero $H$?
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,678 @@
+\title{Integration}
+
+\section{Basic idea of integration}
+
+Integration of functions is an important calculation in computational
+physics, both as a fundamental task and as a component of larger
+problems. Many integrals do not have closed forms and require
+numerical computation.
+
+\noindent {\bf What is the definition of an integral?}
+
+\begin{answer}
+An integral is defined by the limit:
+\begin{equation}
+\int_a^b {\rm d}x f(x) = \lim_{{\rm d}x \rightarrow 0} \left[{\rm d}x
+  \sum_{i=1}^{(b-a)/{\rm d}x} f(x_i) \right]
+\end{equation}
+where $x_i$ are spaced between $a$ and $b$ with separations ${\rm
+  d}x$.
+\end{answer}
+
+\noindent {\bf What is a simple numerical estimate of an integral?}
+
+\begin{answer}
+Just to perform this sum with some finite ${\rm d}x$:
+\begin{equation}
+\int_a^b {\rm d}x f(x) = \left[{\rm d}x \sum_{i=1}^{(b-a)/{\rm d}x}
+  f(x_i) \right]
+\end{equation}
+where $x_i$ are spaced between $a$ and $b$ with separations ${\rm
+  d}x$.
+\end{answer}
+
+This is just a particular case of the more general form that most
+integration methods take, which is that it can be approximated as some
+linear combination of evaluations of the function:
+\begin{equation}
+  \int_a^b {\rm d}x f(x) = \sum_{i=1}^N 
+  f(x_i) w_i
+\end{equation}
+
+\section{Trapezoid rule}
+
+The simple estimate above can be thought of as approximating the
+function as piecewise constant. Obviously there are better
+approximations that can be made! Better algorithms for integration
+generally boil down to better models of the function. In this respect,
+integration is closely allied to interpolation of functions.
+
+The trapezoid rule is the result of integrating a linear interpolation
+of the function. Each term in the integral will become:
+\begin{equation}
+\frac{1}{2} {\rm d}x \left( f_i + f_{i+1} \right) 
+\end{equation}
+The next term is:
+\begin{equation}
+\frac{1}{2} {\rm d}x \left( f_{i+1} + f_{i+2} \right) 
+\end{equation}
+For equally spaced points, then $w_i = {\rm d}x$, except for $w_1=
+w_{N} = {\rm d}x/2$.
+
+\noindent {\bf For what sort of function is the trapezoid rule exactly
+  correct?} 
+
+\begin{answer}
+For a linear function. Of course, this property is not very useful!!
+\end{answer}
+
+\section{Simpson's rule}
+
+Simpson's rule represents the next level of sophistication in
+interpolation. Here, the function is approximated locally around the
+points $i-1$, $i$, $i+1$, as a quadratic:
+\begin{equation}
+f(x) = \alpha' + \beta' x + \gamma' x^2
+\end{equation}
+This is not a very convenient form. Let us instead use:
+\begin{equation}
+  f(x) = \alpha + \beta \left(\frac{x - x_i}{{\rm d}x}\right) +
+  \gamma \left(\frac{x - x_i}{{\rm d}x}\right)^2 = 
+  \alpha + \beta y
+  + \gamma y^2
+\end{equation}
+with a change of variable to $y = (x-x_i)/{\rm d}x$.  For a set of
+three points, $i-1$, $i$, and $i+1$, you can fit the parabola using
+the fact:
+\begin{eqnarray}
+f_{i-1} &=& \alpha - \beta + \gamma \cr
+f_{i} &=& \alpha \cr
+f_{i+1} &=& \alpha + \beta + \gamma
+\end{eqnarray}
+This can be easily solved:
+\begin{eqnarray}
+\alpha &=& f_i \cr
+\gamma &=& \frac{f_{i+1}+f_{i-1}}{2} - f_i \cr
+\beta &=& \frac{f_{i+1}-f_{i-1}}{2}
+\end{eqnarray}
+
+\noindent {\bf What is the integral over the region defined by these
+  three points?}
+
+\begin{answer}
+The integral over the region defined by these three points :
+\begin{eqnarray}
+  \int_{x_{i-1}}^{x_{i+1}} {\rm d}x f(x) &=& {\rm d}x \int_{-1}^{1} {\rm
+    d}y \left(\alpha + \beta y + \gamma y^2\right) \cr
+  &=& {\rm d}x \left[\alpha y + \frac{\beta}{2} y^2 + \frac{\gamma}{3}
+    y^3\right]_{-1}^{1}  \cr
+  &=& {\rm d}x \left[2 \alpha + \frac{2\gamma}{3}\right]
+\end{eqnarray}
+Plugging in $\alpha$ and $\gamma$:
+\begin{equation}
+  \int_{x_{i-1}}^{x_{i+1}} {\rm d}x f(x)
+  = {\rm d}x \left(2 f_i +
+  \frac{f_{i+1} + f_{i-1}}{3} - \frac{2}{3} f_i\right) 
+  = {\rm d}x \left(\frac{1}{3} f_{i-1}
+  + \frac{4}{3} f_i 
+  + \frac{1}{3} f_{i+1}\right)
+\end{equation}
+\end{answer}
+
+Simpson's rule comes from using this approximation across the length
+from $a$ to $b$, by dividing the interval into an even number of
+segments, and integrating each separately. This yields a full
+summation:
+\begin{equation}
+  \int_a^b {\rm d}x f(x) = \sum_{i=1}^N = {\rm d}x \left[\frac{1}{3}
+    f_1 + \frac{4}{3} f_2 + \frac{2}{3} f_3 + \frac{4}{3} f_4 + \ldots
+    + \frac{2}{3} f_{N-2} + \frac{4}{3} f_{N-1} + \frac{1}{3} f_N
+    \right]
+\end{equation}
+
+Because this is applied to two segments at a time, it requires an even
+number of segments, which means $N$ must be odd.
+
+\noindent {\bf The weights for the three points used in in Simpson's
+  rule are set to exactly integral a quadratic function --- a second
+  degree polynomial. What must $N$ be to exactly integrate an
+  $M$-degree polynomial?}
+
+\begin{answer}
+$N = M + 1$. We can show this as follows. Each of the $N$ points $x_k$
+  yields a linear equality:
+\begin{equation}
+\label{eq:weights}
+ f_k = \sum_{j=0}^M \alpha_j x^j
+\end{equation}
+that can be used to determine the coefficients of the function, and
+thus its integral.  So this yields a system of $N$ linear equations,
+with $M+1$ unknowns. So to guarantee a solution, you need $N=M+1$.
+\end{answer}
+
+These methods are good methods, but it turns out we can be even
+cleverer. But before we do so, we have a little bit of work to do.
+
+\section{Rescaling of integrals}
+
+It may appear trivial, but just as in differentiation, there are
+rescaling of integrals that can be performed for various reasons of
+convenience or otherwise. 
+
+The simplest rescaling is linear, which just rescales the limits of
+the integral:
+\begin{equation}
+ I = \int_a^b {\rm d}x f(x) = \frac{b-a}{b'-a'} \int_{a'}^{b'} {\rm d}x' f(x(x'))
+\end{equation}
+which simply follows from the tranformation:
+\begin{eqnarray}
+x' &=& (x-a) \left(\frac{b' - a'}{b-a}\right) + a' \cr
+{\rm d}x' &=& {\rm d}x \left(\frac{b' - a'}{b-a}\right)
+\end{eqnarray}
+or:
+\begin{eqnarray}
+x &=& (x'-a') \left(\frac{b - a}{b'-a'}\right) + a' \cr
+{\rm d}x &=& {\rm d}x' \left(\frac{b - a}{b'-a'}\right)
+\end{eqnarray}
+
+This is a pretty trival rescaling, but it can be useful if you can
+rescale an integral to a previously calculated integral. We will use
+this below in the specific case: $a'=-1$, $b'=1$:
+\begin{equation}
+ I = \int_a^b {\rm d}x f(x) = \frac{b-a}{2} \int_{-1}^{1} {\rm d}x' f(x(x'))
+\end{equation}
+This will allow us to develop some useful algorithms for the specific
+range $-1$ to $1$, which can then be generalized to any finite range.
+
+If we want to alter $[-1, 1]$ to an infinite range that is possible
+too.  For example:
+\begin{eqnarray}
+x &=& a \frac{1+x'}{1-x'}  \cr
+dx &=& a \left(\frac{1}{1-x'} + \frac{1+x'}{(1-x')^2}\right) \cr
+&=& a {\rm d}x' \frac{1 -x' + 1 + x'}{(1-x')^2}  \cr
+&=& {\rm d}x' \frac{2a}{(1-x')^2}  \cr
+\end{eqnarray}
+which lets us rewrite an infinite range:
+\begin{equation}
+ I = \int_0^\infty {\rm d}x f(x) = \int_{-1}^{1} {\rm d}x' \frac{2a
+   x'}{(1-x')^2} f(x(x'))
+\end{equation}
+In this case, $a$ is a choice to be made, and $x=a$ when $x'=0$. So
+there are better choices for $a$ than others -- you want it to be
+somewhere near where the integral is expected to reach about half its
+total.
+
+The other forms of weighting are given in the book, and may be derived
+similarly. 
+
+\section{Gaussian quadrature}
+
+Now we have all the tools to derive one of the workhorse algorithms
+for integrating function, which is Gaussian quadrature. Gaussian
+quadrature has the advantage that it yields a systematic way to write
+an algorithm for integration which utilizes $N$ points, that is {\it
+  exact} for any polynomial of order $2N-1$ or less. Note that this is
+much better than we found before, the path we were on for Simpson's
+rule, which utilized $N+1$ points to exactly integrate a polynomial of
+$N$ points. It turns out that the improvement is gained by choosing
+the points carefully.
+
+We will show how to do this for the integral:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x f(x)
+\end{equation}
+where $f(x)$ is a $2N-1$ degree polynomial (or less).  Clearly we can
+rescale the limits as necessary above for the problem at hand.
+
+We are seeking an exact formula for the integral of this function
+which is:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=1}^N w_i f(x_i)
+\end{equation}
+
+The derivation of this is neat. Note that the derivation in the book
+is extremely confusing and contains at least one error.
+
+We will use the Legendre polynomials to aid us. In fact, it will be
+the roots of the Legendre polynomials (where they are zero) that turn
+out to be the locations of the integration points.
+
+\noindent {\bf What are the Legendre Polynomials? Where have you seen
+  them before.}
+
+\begin{answer}
+  They usually arise in the physics curriculum because they are the
+  solutions to Laplace's Equation ($\nabla^2 \Phi =0$) under
+  cylindrical symmetry. They also have some interesting properties. We
+  will refer to them here as $P_n(x)$, where $-1 < x < 1$, and $n$ is
+  the order of the Legendre Polynomial. They have the property that
+  each Legendre Polynomial is a polynomial of order $n$:
+
+  \begin{equation}
+    P_n(x) = \sum_{i=0}^n a_n x^n 
+  \end{equation}
+
+  Specifically, they are:
+  \begin{equation}
+    P_n = \frac{1}{2^n n!} \frac{{\rm d}^n(x^2 -1)^n}{{\rm d} x^n}
+  \end{equation}
+
+  Or:
+  \begin{eqnarray}
+    P_0(x) &=& 1 \cr
+    P_1(x) &=& x \cr
+    P_2(x) &=& \frac{1}{2}(3x^2 -1) \cr
+    P_3(x) &=& \frac{1}{2}(5x^3 - 3x) \cr
+    P_4(x) &=& \frac{1}{8}(35^4 - 30x^2 + 3) \cr
+    &\ldots& 
+  \end{eqnarray}
+
+  They form a complete set in function space (any function can be
+  expressed as a sum of a sufficient number of Legendre Polynomials).
+  A related property is that any polynomial of order $n$ can be
+  expressed as a sum of Legendre Polynomials with orders $\le n$.
+\end{answer}
+
+\noindent {\bf All the Legendre Polynomials are orthogonal to each
+  other. What does that mean?}
+
+\begin{answer}
+  It means that their dot products are zero. Functions live in a linear
+  vector space. E.g. it is infinite-dimensional, and one set of basis
+  functions are Dirac $\delta$-functions. You can define a dot product
+  in that space as:
+  \begin{equation}
+    q(x) \cdot r(x) = \int_{-1}^{1} {\rm d}x q(x) r(x)
+  \end{equation}
+  As we will see below, this choice is not unique!
+
+  In any case, it means that the statement that Legendre Polynomials
+  are orthogonal means the following:
+  \begin{equation}
+    \int_{-1}^{1} {\rm d}x P_n(x) P_m(x) = \delta_{nm}
+    \frac{2}{2n+1}
+  \end{equation}
+\end{answer}
+
+\noindent {\bf If all the Legendre Polynomials are orthogonal to each
+  other, and any polynomial of order $n$ can be expressed as a sum of
+  Legendre Polynomials with order $\le n$, then what is this
+  integral:}
+  
+  \begin{equation}
+    \int_{-1}^{1} {\rm d}x P_{n+1}(x) x^m 
+  \end{equation}
+  
+  \begin{answer}
+    0
+  \end{answer}
+
+We start by noting that $f(x)$  can be in general factored in the
+following way:
+\begin{equation}
+f(x) = q(x) P_N(x) + r(x)
+\end{equation}
+where we choose $q(x)$ to be an $N-1$-degree polynomial. The first
+term is therefore a polynomial of order $2N-1$, or less. Since we can
+choose the coefficients of the $q(x)$ polynomial to be whatever we
+want, we can always match the coefficients of all the polynomial terms
+of order $N$ or greater in $f(x)$. This leaves a remainder $r(x)$
+which is an $N-1$-degree polynomial (or less).
+
+The integral:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x q(x) P_N(x) = 0
+\end{equation}
+because the Legendre polynomials are always orthogonal to lower-order
+polynomials.
+
+So:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x f(x) = \int_{-1}^{1} {\rm d}x r(x)
+\end{equation}
+Since $r(x)$ is an $N-1$-degree polynomial or less, there is a way to
+integrate the function with $N$ points or less, as we found above.
+
+The locations of these points can be found as follows. The integral is
+now known to be writable as:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=1}^{N} w_i f(x_i) =
+\sum_{i+1}^{N} w_i q(x_i) P_N(x_i) + 
+\sum_{i+1}^{N} w_i r(x_i)
+\end{equation}
+If we choose the points $x_i$ to be the $N$ roots of the Legendre
+polynomial of order $N$, then:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=1}^{N} w_i r(x_i)
+\end{equation}
+where:
+\begin{equation}
+r(x) = \sum_{j=0}^{N-1} \alpha_j x_j
+\end{equation}
+This is great, and we also know how to set the $w_i$. These are
+derived in the same way as for Simpson's rule.  Using the appropriate
+linear set of equations analogous to Equation \ref{eq:weights}, you
+can express the solution for the coefficients $\alpha_j$ in terms of
+values of the function $f(x_i)$, which by design is equal to $r(x_i)$
+at the chosen points, and then given the closed form of the integral
+of the polynomial, this translates into a form for $w_i$.
+
+The notebook shows an implementation given the weights and locations
+determined for $N=4$, and demonstrates performance up to $2N-1$.
+
+Rather than determine weights and locations yourself to higher order,
+the SciPy routines in its {\tt integrate} module already contain this
+information. In particular, {\tt fixed\_quad} performs the fixed-order
+Gaussian quadrature that we find here.
+
+\section{Generalizations of Gaussian quadrature}
+
+The Gaussian quadrature method is good for smooth functions. However,
+if it is not smooth, or in particular has singularities, it will be an
+issue. In addition, there turns out to be plenty of scope in
+generalizing the method to handle certain non-polynomial functions
+exactly.
+
+Specifically, it turns out that you can generally find {\it exact}
+expressions for integrals of the following form:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x W(x) f(x) 
+\end{equation}
+where $W(x)$ is a known function and $f(x)$ is a polynomial. 
+
+The proof involves redefining the dot product between two functions
+$q(x)$ and $r(x)$:
+\begin{equation}
+  q(x) \cdot r(x) = \int_{-1}^{1} {\rm d}x W(x) q(x) r(x)
+\end{equation}
+Then it turns out we can find a complete basis set of polynomals that
+are orthogonal under this definition. Legendre Polynomials are just
+one case of this, for $W(x)=1$. The locations are determined by the
+roots of these new polynomials, and the weights are determined in an
+analogous manner.
+
+As an example, look at the problem:
+\begin{equation}
+\int_{-1}^{1} {\rm d}x \frac{1}{\sqrt{1-x^2}} = \pi
+\end{equation}
+If we use regular Gaussian quadrature, our answers are very bad.
+
+But we can define $W(x)=1/\sqrt{1-x^2}$ and $f(x)=1$. This is called
+{\it Gauss-Chebyshev} quadrature. SciPy doesn't have this directly,
+but it does have a routine that gives you the weights.  This works
+very well for integrating over this singularity.
+
+Another generally useful form has $W(x) = \exp(-x^2)$. This yields
+Gauss-Hermite polynomials, and Gauss-Hermite quadrature. A slightly
+altered Gaussian is a common form for a number of real-world
+distributions. 
+
+\section{A physical example: nuclear reaction rates}
+
+One example of a process that involves an integral that needs to be
+estimated numerically is that of nuclear reactions in stars. 
+
+Nuclear fusion reactions in stars are driven by the following
+process. The center of the star consists of very hot ionized gas. The
+nuclei of the atoms in the gas have high enough energies that two of
+them can get close enough to one another to tunnel through their
+Coulomb repulsion into their energetically preferred bound state (or
+to otherwise interact). The rates of these reactions are driven by the
+number densities of the nuclear species, their temperatures, and their
+Coulomb charges. 
+
+Specifically, the cross-section for the reactions can be written:
+\begin{equation}
+\sigma(E) = \frac{S(E)}{E} \exp\left[-(E_c / E)^{1/2}\right]
+\end{equation}
+where we will set the slowly varying function $S(E)=1$ for simplicity
+and:
+\begin{equation}
+E_c = \frac{2\pi^2 Z_1^2 Z_2^2 e^4 \mu}{\hbar^2}
+\end{equation}
+
+Then the reaction rate per unit volume, which ultimately determines in
+the case of our Sun how much energy is produced, and thus how brightly
+it shines, is:
+\begin{equation}
+r_{12} = \frac{n_1 n_2}{(\pi \mu)^{1/2}}
+\left(\frac{2}{kT}\right)^{3/2}  \int_0^\infty {\rm d}E S(E)
+\exp\left[-(E_c/E)^{1/2}\right] \exp\left(-E/kT\right)
+\end{equation}
+Basically, this is an integral over all of the relative kinetic
+energies the particles can have, weighted by the cross section of
+interaction.
+This governs the rates for any two species, but of course in reality
+the Sun's core contains many different simultaneous reactions. We will
+just calculate a small part of this problem.
+
+We may be interested in a very important dependence, which is the
+dependence of this reaction rate on temperature. This dependence is
+part of what sets the overall structure of stars. 
+
+For two protons, the value:
+\begin{equation}
+E_c = \frac{2 \pi^2 e^4 m_p}{2 \hbar^2} \approx 7.9 \times 10^{-14}
+\mathrm{\quad kg~m}^2\mathrm{~s}^{-2}
+\end{equation}
+
+The temperatures are of order $10^7$ K, so:
+\begin{eqnarray}
+  kT &\sim&
+  1.3806 \times 10^{-23} \times 10^{7} \mathrm{\quad kg~m}^2\mathrm{~s}^{-2}\cr
+&\sim& 
+  1.3806 \times 10^{-16} \mathrm{\quad kg~m}^2\mathrm{~s}^{-2}
+\end{eqnarray}
+So typically $E_c/kT \sim 1000$.
+
+For convenience and to keep us as safe as possible from underflows and
+overflows, we want to integrate over variables that are closer to
+unity, not $10{-15}$. Also, if we look at the integrand it is clear
+that $E_c$ and $kT$ do not matter individually (except as overall
+scale factors), just their ratio; we can avoid doing some integrals if
+we cast results just in terms of the ratio.  So it makes sense to
+perform the transformation:
+\begin{eqnarray}
+ x &=& E / kT \cr
+ {\rm d}x &=& {\rm d}E / kT
+\end{eqnarray}
+and then define $R = E_c /kT$,
+which then gives us:
+\begin{eqnarray}
+r_{12} &=& \frac{2 n_1 n_2}{(\pi \mu)^{1/2}}
+\left(\frac{2}{kT}\right)^{1/2}
+\int_0^\infty {\rm d}x S(E(x))
+\exp\left[-(R/x)^{1/2}\right] \exp\left(- x \right) \cr
+&=& \frac{2 n_1 n_2}{(\pi \mu)^{1/2}}
+\left(\frac{2}{kT}\right)^{1/2} I(R)
+\end{eqnarray}
+where
+\begin{equation}
+I(R) = \int_0^\infty {\rm d}x S(E(x))
+\exp\left[-(R/x)^{1/2}\right] \exp\left(- x \right) 
+\end{equation}
+Now, the integration involves just $R$, and the rest of the scaling of
+the reaction rate is just multiplication.
+
+The integral has the form:
+\begin{equation}
+I(R) = \int_0^{\infty} {\rm d}x f(x; R) \exp(-x)
+\end{equation}
+where
+\begin{equation}
+f(x; R) = 
+\exp\left[-(R/x)^{1/2}\right]
+\end{equation}
+This is amenable to a form of Gaussian quadrature, specifically
+Gauss-Laguerre quadrature. This means:
+\begin{equation}
+I(R) \approx \sum_{i=1}^N w_i f(x_i; R)
+\end{equation}
+
+If we want to know how $r_{12}$ scales with temperature:
+\begin{equation}
+r_{12} \propto R^{1/2} I(R)
+\end{equation}
+
+\section{Monte Carlo}
+
+Another way to estimate integrals is the Monte Carlo technique, which
+is useful especially for multidimensional integrals, but we introduce
+in the 1D case.
+
+The basic idea here is to distribute a bunch of random $x$ between $a$
+and $b$. Then to issue random $y$ values between the minimum and
+maximum of $f(x)$ (or any values more extreme than those). The
+estimate then becomes:
+\begin{equation}
+\int_a^b {\rm d}x f(x) \approx (b-a) (f_{\rm max} - f_{\rm min})
+\frac{N(y<f(x))}{N}
+\end{equation}
+
+\noindent {\bf Can you guess what the error in this estimate is?}
+
+\begin{answer}
+It will scale as $\sqrt{N(y<f(x))}$, because this is a Poisson-like
+process.  Specifically:
+\begin{equation}
+\langle\delta I^2 \rangle^{1/2} \approx (b-a) (f_{\rm max} - f_{\rm min})
+\frac{\sqrt{N(y<f(x))}}{N}
+\end{equation}
+and so
+\begin{equation}
+\frac{\langle\delta I^2 \rangle^{1/2}}{I} \approx 
+\frac{1}{\sqrt{N(y<f(x))}}
+\end{equation}
+This means you need a {\it ton} of points to get good
+precision. Getting to a part in $10^{10}$ would require $10^{20}$
+points. So this isn't a good strategy in 1-dimension! In fact, there
+are better methods in higher dimensions too.
+\end{answer}
+
+The better method is {\it mean value integration}. This uses the fact
+that in some range $a<x<b$:
+\begin{equation}
+\langle f(x) \rangle = \frac{\int_a^b \dd{x}  f(x)}{b-a}
+\end{equation}
+So if we estimate:
+\begin{equation}
+\langle f(x) \rangle \approx \frac{1}{N}\sum_{i=1}^N f(x_i)
+\end{equation}
+for uniformly, randomly chosen $a<x_i<b$, we can estimate the integral
+as:
+\begin{equation}
+I = \int_a^b \dd{x}  f(x) \approx (b-a) \langle f(x)\rangle
+\end{equation}
+
+The error in $I$ also scales as $1/\sqrt{N}$ as for the stone-throwing
+case, but you get to use all of the points.  Specifically:
+\begin{equation}
+\langle \delta I^2 \rangle = \frac{\sigma_f^2}{N} 
+\end{equation}
+where:
+\begin{equation}
+\sigma_f^2 = \int_a^b \dd{x} (f(x) - \langle f\rangle)^2
+\end{equation}
+
+\section{Multidimensional integrals}
+
+The real value of the Monte Carlo method is in
+multidimensions. Traditional methods have difficulty in
+multidimensions. In the general case in 2D:
+\begin{equation}
+I = \int \dd{x} \int \dd{y} f(x, y)
+\end{equation}
+one case in principle construct function that evaluates using some
+method:
+\begin{equation}
+I_y(x) = \int \dd{y} f(x, y)
+\end{equation}
+and then build that into an outer integral:
+\begin{equation}
+I = \int \dd{x} I_y(x)
+\end{equation}
+But if there are (e.g.) 100 evaluations of $I_y(x)$, and each of those
+requires 100 evaluations of $f(x,y)$, that is 10000 evaluations. That
+is, the number of evaluations goes as $N^d$, where $d$ is the number
+of dimensions. 
+
+It is very important to not blindly evaluate multi-dimensional
+integrals if you do not have to! E.g. if the function is separable:
+\begin{equation}
+f(x, y) = f_x(x) f_y(y)
+\end{equation}
+obviously you can avoid 2D integrals entirely. What is not always as
+obvious are cases where you can change variables to avoid an inner
+integral or simplify it. This is not obviously separable:
+\begin{equation}
+  I = \int_0^\infty \dd{x} \int_0^\infty \dd{y} f(x, y) =
+  \int_0^\infty \dd{x} \int_0^\infty \dd{y} f(xy) =
+  \int_0^\infty \dd{x} \int_0^\infty \dd{y} \exp(- xy) \sin^3(xy)
+\end{equation}
+but if I change variables:
+\begin{eqnarray}
+y' &=& xy \cr
+\dd{y'} &=& x\dd{y}
+\end{eqnarray}
+then it is
+\begin{equation}
+  I = \int_0^\infty \dd{x} \int_0^\infty \dd{y} f(xy) =
+  \int_0^\infty \dd{x} \frac{1}{x} \int_0^\infty \dd{y'} f(y') =
+  \left(\int_0^\infty \dd{x} \frac{1}{x}\right)
+  \left(\int_0^\infty \dd{y'} f(y') \right)
+\end{equation}
+Note how this required the change of variables to not affect the
+limits of integration!! The point is, before you do the integral
+numerically do as much math as you can on it!
+
+But in those cases where you cannot avoid multidimensional integrals
+of high dimension (often three and certainly higher) Monte Carlo
+methods are the way to go.
+
+\noindent {\bf How do you use the mean value integration method in
+  multidimensions?}
+
+\begin{answer}
+The mean value method works fine in such cases; you just need to draw
+points in the $N$-dimensional space being integrated.
+\end{answer}
+
+There are two useful techniques to improve the MC method for
+integration. The first is {\it variance reduction}. If we have some
+function $g(x)$ which is similar to $f(x)$ but can be integrated
+analytically, then it is useful to calculate:
+\begin{equation}
+  I = \int \dd^N{\vec{x}} f(\vec{x})
+  = \int \dd^N{\vec{x}} (f(\vec{x}) - g(\vec{x})) + 
+  \int \dd^N{\vec{x}} g(\vec{x})
+\end{equation}
+where the first term is performed with MC, and the second term is
+analytic. 
+
+\noindent {\bf Explain why this method reduces the error.}
+
+\begin{answer}
+Because the error is related to $\sigma_f$. If you perform an
+integration over $f-g$, and $\sigma_{f-g}$ is smaller than $\sigma_f$,
+then you are reducing the random error.
+\end{answer}
+
+A similar method of reducing the error is {\it importance
+  sampling}. This is slightly different. You use a random distribution
+with a probability $P(x)$ (not uniform). Then you note:
+\begin{equation}
+  I = \int \dd^N{\vec{x}} f(\vec{x}) = 
+  \int \dd^N{\vec{x}} P(\vec{x}) \frac{f(\vec{x})}{P(\vec{x})}
+\end{equation}
+If you have $N$ random points $x_i$ distributed as $P(x)$, then:
+\begin{equation}
+ I \approx \frac{1}{N} \sum_{i}  \frac{f(\vec{x})}{P(\vec{x})}
+\end{equation}
+
+If $f(x)/P(x)$  is more uniform than $f(x)$ then the error in the
+result is smaller, for the same reason as in the variance reduction
+method. 
+
+An example of either case is a function $f(x)$ which is close to
+$\exp(-x^2)$.
+

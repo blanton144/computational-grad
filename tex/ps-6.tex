@@ -1,0 +1,36 @@
+\documentclass[11pt, preprint]{aastex}
+
+\include{computational_defs}
+
+\begin{document}
+
+\title{\bf Computational Physics / PHYS-UA 210 / Problem Set \#6
+\\ Due October 11, 2019 }
+
+You {\it must} label all axes of all plots, including giving the {\it
+  units}!!
+
+\begin{enumerate}
+\item Exercise 5.15 in Newman.
+\item This problem will explore interpolation a little so you have
+  some experience with it. We will interpolate values of the $\sin()$
+  function. In each part below, you will interpolate $\sin()$ from a
+  grid of known values at $N$ equally spaced points for $x$ between
+  $0$ and $10\pi$ (inclusive).
+\begin{enumerate}
+\item First, use linear interpolation, writing this code
+  yourself. Test your code for $N=20$, $N=40$, $N=80$, and
+  $N=160$. Quantify the rms residuals of the interpolation relative to
+  $\sin()$ within the range of the grid, as a function of $N$.
+\item Second, go ahead and utilize the {\tt interp1d} class in
+  {\tt scipy.interpolate} to interpolate. Test the {\tt slinear}, {\tt
+    quadratic}, and {\tt cubic} methods in the same way as above.
+\item Third, add a little bit of noise to the values of $\sin()$ that
+  you interpolate between; use Gaussian noise with a standard
+  deviation of 0.1. Show some examples of how the interpolation
+  behaves.
+\end{enumerate}
+  
+\end{enumerate}
+
+\end{document}

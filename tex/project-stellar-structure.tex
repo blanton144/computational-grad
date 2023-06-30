@@ -1,0 +1,92 @@
+\documentclass[11pt, preprint]{aastex}
+
+\include{computational_defs}
+
+\begin{document}
+
+\title{\bf Computational Physics Project / Stellar Structure}
+
+This project involves a simplified calculation of stellar structure,
+under spherical symmetry.
+
+The general equations governing stellar structure in spherical
+symmetry are mass conservation, the hydrostatic equation, energy
+conservation, and energy transport. It turns out to be useful to 
+consider these equations not as a function of radius, but as a
+function of enclosed mass within the radius.
+
+A good introduction to the background behind the equations can be
+found in
+\href{http://www.ast.cam.ac.uk/~pettini/STARS/Lecture09.pdf}{\color{blue}
+  these lecture notes}. To summarize, for a star with energy transport
+dominated by radiative diffusion:
+\begin{eqnarray}
+\frac{\dd{r}}{\dd{m}} &=& \frac{1}{4\pi r^2 \rho} \cr
+\frac{\dd{P}}{\dd{m}} &=& -G \frac{m}{4\pi r^4} \cr
+\frac{\dd{L}}{\dd{m}} &=& \mathcal{E} \cr
+\frac{\dd{T}}{\dd{m}} &=& - \frac{3}{16 \sigma } \frac{\kappa}{T^3}
+\frac{L}{(4\pi r^2)^2}
+\end{eqnarray}
+where $r$ is the radius, $m$ is the mass enclosed within $r$, $L$ is
+the luminosity generated within $r$, $P$ is the pressure, $T$ is the
+temperature, and $\rho$ is the density. $\mathcal{E}$ is the energy
+generated per unit mass and $\kappa$ is the opacity of the
+gas. $\sigma$ and $c$ are the Stefan-Boltzman constant and the speed
+of light.
+
+If we want to solve these equations, we need four boundary conditions;
+these are that $r=0$ and $L=0$ at $m=0$, and that $P=0$ and $T=0$ at
+$m=M_\ast$.
+
+We also need to know how $\mathcal{E}$ and $\kappa$ behave. Generally:
+\begin{equation}
+\mathcal{E} = \mathcal{E}_0 \rho^\alpha  T^\beta
+\end{equation}
+where here we will take $\alpha=1$ and $\beta = 4$. 
+
+The opacity $\kappa$ can be approximated as :
+\begin{equation}
+\kappa = \kappa_0 \rho T^{-3.5}
+\end{equation}
+
+Finally, we need the equation of state, which in the cases we consider
+here can be approximated as :
+\begin{equation}
+P = \frac{\rho kT}{\mu m_p}
+\end{equation}
+where $\mu$ is the mean molecular weight in units of proton masses,
+and is 0.6.
+
+The parameters of the system that are not physical constants are
+$M_\ast$, $\kappa_0$,  and $\mathcal{E}_0$.
+
+\section{Prep work}
+
+\begin{itemize}
+\item Recast the above equations into a form with the minimum number
+  of independent, unitless parameters.  You should perform your
+  numerical analysis in these variables, and then scale your solution
+  after the fact to specific physical solutions.
+\item {\bf polytrope solution}
+\end{itemize}
+
+\section{Creating the integrator}
+
+\begin{itemize}
+\item Build an integrator for the ODE system working from the center
+  outwards, given some initial conditions at the center.
+\item Wrap the integration in a multidimensional minimization routine
+  that adjusts the central conditions of $T$ and $P$ to fit the outer
+  boundary conditions.
+\end{itemize}
+
+\section{Testing the integrator}
+
+\begin{itemize}
+\item Plot $\rho$, $P$, $T$, $L$ and $\mathcal{E}$ as a function of
+  enclosed radius for some choice of $M_\ast$.
+\item Given the Solar values of mass and luminosity, can you determine
+  some combination of $\kappa_0$ and $\mathcal{E}_0$?
+\end{itemize}
+
+\end{document}
