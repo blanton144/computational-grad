@@ -25,18 +25,8 @@ Lecture notes and associated information:
 Problem sets: 
 
 | [PS 1](pdf/ps-1.pdf) | 
-| [PS 2](pdf/ps-2.pdf) | 
-| [PS 3](pdf/ps-3.pdf) | 
-| [PS 4](pdf/ps-4.pdf) | 
-| [PS 5](pdf/ps-5.pdf) | 
-| [PS 6](pdf/ps-6.pdf) | 
-| [PS 7](pdf/ps-7.pdf) | 
-| [PS 8](pdf/ps-8.pdf) | 
-| [PS 9](pdf/ps-9.pdf) | 
-| [PS 10](pdf/ps-10.pdf) | 
-| [PS 11](pdf/ps-11.pdf) | 
 
-Semester projects:
+Potential projects (not a final list or finally revised instructions yet):
 
 | [Gravity on a mesh](pdf/project-gravity-mesh.pdf) | 
 | [Point spread function of a telescope](pdf/project-telescope.pdf) | 

@@ -14,29 +14,41 @@
 
 \begin{document}
 
-\title{\bf Computational Physics / PHYS-UA 210}
+\title{\bf Computational Physics / PHYS-GA 2000}
 ~
 ~
 
-\noindent This course teaches computational physics at a level
-appropriate for undergraduate physics majors.  Classes meet Tuesday
-and Thursday 12:30am to 1:45pm, in Room 1045 of 726 Broadway.  The
-textbook is {\it Computational Physics}, by Mark Newman. I will also
-ask you sometimes to look online at the
-\href{https://jakevdp.github.io/PythonDataScienceHandbook/}{Python Data Science Handbook (PDSH)} by Jake Van Der Plas.
+\noindent This course teaches computational physics for physics PhD
+students. Classes meet Tuesday and Thursday 9:30am to 10:45am, in Room
+1045 of 726 Broadway.
+
+\noindent The textbook is {\it Computational Physics}, by Mark
+Newman. I will draw material also from {\it Computational Physics}, by
+Philipp Scherer. Not a lot of creativity in book titles in this
+field. Other resources are:
+\begin{itemize}
+\item
+  \href{https://jakevdp.github.io/PythonDataScienceHandbook/}{Python
+    Data Science Handbook (PDSH)} by Jake Van Der Plas.
+\item {\it Numerical Recipes}, by Press, Teukolsky, Vetterling, and
+  Flannery. This book is mostly useful for its insight and not for its
+  code.
+\end{itemize}
 
 \noindent If you have never programmed in Python before then Chapter 2
 of the book will require your special attention. There are also many
 online resources for learning the basics of Python. I can recommend
-Software Carpentry.
+Software Carpentry and also Prof.~David Pine's {\it Introduction to
+  Python for science and engineering}, available online through Bobst
+Library.
 
 \noindent Prof. Blanton's office is Room 941 of 726 Broadway, and his
 email is {\tt blanton@nyu.edu}. You can come to ask questions about
 computational physics (or any other subject!) on Tuesdays 11:00am to
 12:15pm, or by appointment.
 
-\noindent The teaching assistant is Jatin Abacousnac ({\tt
-  ja3067@nyu.edu}) Recitation is Thursday, 5pm--6:15pm, in Room 1067
+\noindent The teaching assistant is Mia Morrell ({\tt
+  mcm8850@nyu.edu}) Recitation is Friday, 11am--12:15pm, in Room 1045
 of 726 Broadway. This time will primarily consist of working on
 homework assignments.
 
@@ -67,8 +79,9 @@ about code standards to follow!
 \noindent Grades are based on problem sets (65\%), the large project
 and presentation (25\%), and class participation (10\%).
 
-\noindent The classes will proceed as follows (subject to revision!).
-The problem sets will be due on each Friday of the indicated weeks.
+\noindent The classes will proceed as follows (subject to
+revision!). The special topics at the end will consist of examples
+from throughout physics and are currently TBD.
 
 \baselineskip 0pt
 \begin{table}[h!]
@@ -80,33 +93,35 @@ The problem sets will be due on each Friday of the indicated weeks.
 2023-09-05 (T) & Numbers on computers  & Ch.~1, 2, 3 & \cr
 2023-09-07 (R) & Arrays             & PDSH, Ch. 1 \& 2 & \cr
 2023-09-12 (T) & Numerics           & Ch.~4 & PS\#1 \cr
-2023-09-14 (R) & Random Numbers     & Ch.~10.1 & \cr
-2023-09-19 (T) & Random Numbers     & Ch.~10.2 & PS\#2 \cr
-2023-09-21 (R) & Integration        & Ch.~5.1--5.3 & Teams Determined \cr
-2023-09-26 (T) & Integration        & Ch.~5.4--5.6 & PS\#3\cr
-2023-09-28 (R) & Integration        & Ch.~5.7--5.9 & \cr
-2023-10-03 (T) & Differentiation    & Ch.~5.10--5.11 & PS\#4\cr
-2023-10-05 (R) & Linear Algebra     & Ch.~6.1 & \cr
-2023-10-10 (T) & {\bf Legislative Day, no class}       & & PD\#5\cr
-2023-10-12 (R) & Linear Algebra     & Ch.~6.1 & \cr
-2023-10-17 (T) & Eigensystems       & Ch.~6.2 & PS\#6 \cr
-2023-10-19 (R) & Eigensystems       & Ch.~6.2 & \cr
-2023-10-24 (T) & Eigensystems       & Ch.~6.2 & PS\#7\cr
-2023-10-26 (R) & Root-finding       & Ch.~6.3 & \cr
-2023-10-31 (T) & Fourier Analysis   & Ch.~7.1 & PS\#8 \cr
-2023-11-02 (R) & Fourier Analysis   & Ch.~7.2--7.3 & Project draft due \cr
-2023-11-07 (T) & Fourier Analysis   & Ch.~7.4 & \cr
-2023-11-09 (R) & Minimization       & Ch.~6.4 & \cr
-2023-11-14 (T) & Minimization       & Ch.~6.4 & \cr
-2023-11-16 (R) & Ordinary DEs        & Ch.~8.1--8.3 & PS\#10 \cr
-2023-11-21 (T) & Ordinary DEs        & Ch.~8.4--8.5 & \cr
-2023-11-23 (R) & Ordinary DEs        & Ch.~8.6 & PS\#11 \cr
-2023-11-28 (T) & {\bf Thanksgiving, no class} & & \cr
-2023-11-30 (R) & Partial DEs        & Ch.~9.1--9.2 & \cr
-2023-12-05 (T) & Partial DEs        & Ch.~9.3 & \cr
-2023-12-07 (R) & Partial DEs        & Ch.~9.3  & Final project due\cr
-2023-12-11 (T) & Project presentations & --- & PS\#12\cr
-2023-12-13 (R) & Project presentations & --- & PS\#12\cr
+2023-09-14 (R) & Random Numbers     & Ch.~10.1--10.2 & \cr
+2023-09-19 (T) & Integration        & Ch.~5.1--5.4 & PS\#2 \cr
+2023-09-21 (R) & Integration        & Ch.~5.5--5.9 & Teams Determined \cr
+2023-09-26 (T) & Differentiation    & Ch.~5.10--5.11 & PS\#3\cr
+2023-09-28 (R) & Linear Algebra     & Ch.~6.1 & \cr
+2023-10-03 (T) & Linear Algebra     & Ch.~6.1 & PS\#4\cr
+2023-10-05 (R) & Eigensystems       & Ch.~6.2 & \cr
+2023-10-10 (T) & {\bf Legislative Day, no class}       & & \cr
+2023-10-12 (R) & Eigensystems       & Ch.~6.2 & \cr
+2023-10-17 (T) & Root-finding       & Ch.~6.3 & PS\#5 \cr
+2023-10-19 (R) & Fourier Analysis   & Ch.~7.1 & \cr
+2023-10-24 (T) & Fourier Analysis   & Ch.~7.2--7.3 & Project draft \#1
+due\cr
+2023-10-26 (R) & Fourier Analysis   & Ch.~7.4 & \cr
+2023-10-31 (T) & Minimization       & Ch.~6.4 & PS\#6 \cr
+2023-11-02 (R) & Minimization       & Ch.~6.4 & \cr
+2023-11-07 (T) & Ordinary DEs       & Ch.~8.1--8.3 & PS\#7 \cr
+2023-11-09 (R) & Ordinary DEs       & Ch.~8.4--8.5 & \cr
+2023-11-14 (T) & Ordinary DEs       & Ch.~8.6 & Project draft \#2 due \cr
+2023-11-16 (R) & Partial DEs        & Ch.~9.1--9.2 & \cr
+2023-11-21 (T) & Partial DEs        & Ch.~9.3 & PS\#8 \cr
+2023-11-23 (R) & {\bf Thanksgiving, no class} & & \cr
+2023-11-28 (T) & Partial DEs        & Ch.~9.3 & PS\#9 \cr
+2023-11-30 (R) & Markov-Chain Monte Carlo & Ch.~9.1--9.2 & \cr
+2023-12-05 (T) & Special topics     & --- & PS\#10 \cr
+2023-12-07 (R) & Special topics     & --- & \cr
+2023-12-11 (T) & Special topics     & --- & \cr
+2023-12-13 (R) & Special topics     & --- & Final project due\cr
+{\it Exam week} & Project presentations & --- & \cr
 \hline
 \end{tabular}
 \end{table}
