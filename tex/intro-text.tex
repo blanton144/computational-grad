@@ -29,9 +29,9 @@ It is helpful to understand what we will not be doing:
 
 I will lecture and demonstrate in class, and there will be homeworks
 most of the semester. There will also be a set of large-ish
-projects. You will work on these in pairs, and you will let me know
-which teams you are on by Sept 21, at which point I will assign
-topics.
+projects. You will work on these in pairs or triplets, and you will
+let me know which teams you are on by Sept 21, at which point I will
+assign topics.
 
 Your recitations will be spent working on homeworks and projects, with
 the TA available to help. The first recitation will be spent setting
@@ -81,9 +81,9 @@ important resources including my class notes.
 I want to describe what each of you will need in your environment. The
 end point requirements are:
 \begin{ditemize}
-\item git
+\item {\tt git}
 \item {\tt \LaTeX}
-\item Python
+\item {\tt Python}
 \end{ditemize}
 and as long as those work on your system you should be OK. In
 principle, these should all be able to work on Windows, Linux, or Mac
@@ -169,7 +169,7 @@ If you store a number on a computer this way it is known as an
 ``unsigned 8-bit integer.''
 \end{answer}
 
-\noindent{\bf What is the highest integral that can be represented by
+\noindent{\bf What is the highest integer that can be represented by
     a byte in this way?}
 
 \begin{answer}
@@ -224,7 +224,7 @@ computing time, I/O time, or memory. You cannot escape the use of
 judgment in determining whether or not to use high precision or not!
 It will not matter much in this course however.
 
-The IEEE has defined standards for storing floating point numbers.  To
+IEEE 754 defines standards for storing floating point numbers.  To
 express a large enough dynamic range (more than just a factor of a few
 billion for 32 bits), floating point numbers use something akin to
 ``scientific notation.'' Just like we write numbers like:
@@ -274,6 +274,29 @@ with $e=0$, with only the lowest significant bit set, or $1.4\times
 10^{-45}$. 
 \end{answer}
 
+\noindent {\bf How does the computer add or subtract two floating
+point numbers?}
+
+\begin{answer}
+Adding and subtracting integers is pretty straightforward.  To add
+floating point numbers, it is just as simple {\it if} the floating
+point numbers have the same exponent. In that case, the mantissa is
+just added together, and if it rolls over beyond $2^{23}$ or below
+$0$, the exponent is adjusted and the mantissa converted accordingly.
+
+But if the two numbers have different exponents, first the exponent
+has to be shifted. If the exponents are $e=100$ and $99$, then the
+latter must be shifted one bit to the left up to 100, and the mantissa
+shifted one bit to the right to account for the difference. However,
+this new number is not necessarily precisely the same number that was
+expressed before, because the lower significance bit of the number is
+lost.
+
+So in general the addition of the numbers might not yield precisely
+the correct answer. This is known as {\it round-off error} and is a
+major limitation to understand in computational work. 
+\end{answer}
+
 \noindent {\bf Imagine adding a small number ($10^{-8}$) to a larger
   one ($1$) on a computer. How does truncation error affect this?}
 
@@ -294,7 +317,7 @@ about this to $1$ will result in no change at all to one, which I will
 demonstrate here!
 
 Note that it is {\it relative} scale of the numbers that matters. As
-long as you are within about $10^7$ of the edge the range of
+long as you are further than $10^7$ from the edge the range of
 single-precision numbers, it isn't the absolute scale of the numbers
 that matters.
 
