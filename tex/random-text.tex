@@ -300,7 +300,10 @@ f(y, \theta) {\rm d}y {\rm d}\theta =
 \exp(-y^2/2) y {\rm d}y {\rm d}\theta
 \end{equation}
 
-Then we can write:
+In $\theta$, the distribution should be uniform. This justifies the
+trigonometric parts of the definition of $y_1$ and $y_2$.
+
+To justify the prefactors we can write:
 \begin{eqnarray}
 \frac{{\rm d}y}{{\rm d}r} &=& \frac{1}{f(y)} \cr
 {{\rm d}r} &=& {\rm d}y {f(y)} \cr
@@ -315,6 +318,23 @@ or
 \begin{equation}
 y(r) = -2 \ln(r)
 \end{equation}
+This justifies the prefactors in the definition of $y_1$ and $y_2$. 
 
-The actual implementation avoids use of trig functions in a clever
-way, but I won't describe that here.
+Because the 2D distribution is separable, we are guaranteed that $y_1$
+and $y_2$ are independent, so we have gotten two independent
+Gaussian-distributed variables from two independent
+uniform-distributed variables. The actual implementation avoids the
+use of trig functions in a clever way, but I won't describe that here.
+
+In fact, if you look at the latest versions of NumPy, it uses a
+so-called ``Zigurrat'' implementation. This is a form of rejection
+sampling that creates a distribution that follows a piece-wise
+constant function, which requires two uniform deviates. The piece-wise
+distribution is designed to just slightly exceed the Gaussian (with
+$\sigma=1$). It then uses a rejection algorithm. This is a lot more
+complicated code than Box-Muller, but it turns out to be a lot
+faster.
+
+This is a pattern you'll see in most modern technology---often the
+simple, elegant solutions give way to almost bizarrely complex
+solutions that end up being more robust, faster, and accurate.
