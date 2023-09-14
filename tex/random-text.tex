@@ -250,7 +250,7 @@ negatively correlated.
 
 Then for some desired $f_x(x)$:
 \begin{equation}
-\left| \frac{{\rm d}x}{{\rm d}r} \right| = \left|\frac{1}{f_x(x)}\right|
+\left| \frac{{\rm d}x}{{\rm d}r} \right| = \frac{1}{f_x(x)}
 \end{equation}
 from which we can derive a transformation $x(r)$.
 
@@ -338,3 +338,18 @@ faster.
 This is a pattern you'll see in most modern technology---often the
 simple, elegant solutions give way to almost bizarrely complex
 solutions that end up being more robust, faster, and accurate.
+
+\section{Non-analytic nonuniform distributions}
+
+A common use case is to want to produce a nonuniform distribution that
+cannot be expressed analytically. In this case, it is often possible
+to generate the cumulative distribution: 
+\begin{equation}
+F(x) = \int_{-\infty}{x} {\rm d}x' f(x'),
+\end{equation}
+which maps to the range $0\ldots 1$.
+
+To generate random points from the distribution $f(x)$, one can select
+a uniform distribution $r$ and use the formula $x = F^{-1}(r)$, where
+$F^{-1}$ is evaluated numerically by interpolating a tabulation of
+$F(x)$.
