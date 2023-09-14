@@ -187,18 +187,19 @@ range $-1$ to $1$, which can then be generalized to any finite range.
 If we want to alter $[-1, 1]$ to an infinite range that is possible
 too.  For example:
 \begin{eqnarray}
-x &=& a \frac{1+x'}{1-x'}  \cr
-dx &=& a \left(\frac{1}{1-x'} + \frac{1+x'}{(1-x')^2}\right) \cr
-&=& a {\rm d}x' \frac{1 -x' + 1 + x'}{(1-x')^2}  \cr
-&=& {\rm d}x' \frac{2a}{(1-x')^2}  \cr
+x &=& q \frac{1+x'}{1-x'}  \cr
+{\rm d}x &=& q \left(\frac{1}{1-x'} + \frac{1+x'}{(1-x')^2}\right){\rm
+d}x'\cr
+&=& q {\rm d}x' \frac{1 -x' + 1 + x'}{(1-x')^2}  \cr
+&=& {\rm d}x' \frac{2q}{(1-x')^2}  \cr
 \end{eqnarray}
 which lets us rewrite an infinite range:
 \begin{equation}
- I = \int_0^\infty {\rm d}x f(x) = \int_{-1}^{1} {\rm d}x' \frac{2a
-   x'}{(1-x')^2} f(x(x'))
+ I = \int_0^\infty {\rm d}x f(x) = \int_{-1}^{1} {\rm d}x'
+ \frac{2q}{(1-x')^2} f(x(x'))
 \end{equation}
-In this case, $a$ is a choice to be made, and $x=a$ when $x'=0$. So
-there are better choices for $a$ than others -- you want it to be
+In this case, $q$ is a choice to be made, and $x=q$ when $x'=0$. So
+there are better choices for $q$ than others -- you want it to be
 somewhere near where the integral is expected to reach about half its
 total.
 
@@ -208,7 +209,7 @@ similarly.
 \section{Gaussian quadrature}
 
 Now we have all the tools to derive one of the workhorse algorithms
-for integrating function, which is Gaussian quadrature. Gaussian
+for integrating functions, which is Gaussian quadrature. Gaussian
 quadrature has the advantage that it yields a systematic way to write
 an algorithm for integration which utilizes $N$ points, that is {\it
   exact} for any polynomial of order $2N-1$ or less. Note that this is
@@ -230,8 +231,8 @@ which is:
 \int_{-1}^{1} {\rm d}x f(x) = \sum_{i=1}^N w_i f(x_i)
 \end{equation}
 
-The derivation of this is neat. Note that the derivation in the book
-is extremely confusing and contains at least one error.
+The derivation of this is neat. Note that the derivation in the Landau
+book is extremely confusing and contains at least one error.
 
 We will use the Legendre polynomials to aid us. In fact, it will be
 the roots of the Legendre polynomials (where they are zero) that turn
@@ -249,7 +250,7 @@ out to be the locations of the integration points.
   each Legendre Polynomial is a polynomial of order $n$:
 
   \begin{equation}
-    P_n(x) = \sum_{i=0}^n a_n x^n 
+    P_n(x) = \sum_{i=0}^n a_i x^i 
   \end{equation}
 
   Specifically, they are:
@@ -267,7 +268,7 @@ out to be the locations of the integration points.
     &\ldots& 
   \end{eqnarray}
 
-  They form a complete set in function space (any function can be
+  They form a complete basis set in function space (any function can be
   expressed as a sum of a sufficient number of Legendre Polynomials).
   A related property is that any polynomial of order $n$ can be
   expressed as a sum of Legendre Polynomials with orders $\le n$.
@@ -297,10 +298,10 @@ out to be the locations of the integration points.
 \noindent {\bf If all the Legendre Polynomials are orthogonal to each
   other, and any polynomial of order $n$ can be expressed as a sum of
   Legendre Polynomials with order $\le n$, then what is this
-  integral:}
+  integral, for $m<n$:}
   
   \begin{equation}
-    \int_{-1}^{1} {\rm d}x P_{n+1}(x) x^m 
+    \int_{-1}^{1} {\rm d}x P_{n}(x) x^m 
   \end{equation}
   
   \begin{answer}
@@ -336,26 +337,48 @@ integrate the function with $N$ points or less, as we found above.
 The locations of these points can be found as follows. The integral is
 now known to be writable as:
 \begin{equation}
-\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=1}^{N} w_i f(x_i) =
-\sum_{i+1}^{N} w_i q(x_i) P_N(x_i) + 
-\sum_{i+1}^{N} w_i r(x_i)
+\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=0}^{N-1} w_i f(x_i) =
+\sum_{i=0}^{N-1} w_i q(x_i) P_N(x_i) + 
+\sum_{i=0}^{N-1} w_i r(x_i)
 \end{equation}
 If we choose the points $x_i$ to be the $N$ roots of the Legendre
 polynomial of order $N$, then:
 \begin{equation}
-\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=1}^{N} w_i r(x_i)
+\int_{-1}^{1} {\rm d}x f(x) = \sum_{i=0}^{N-1} w_i r(x_i)
 \end{equation}
 where:
 \begin{equation}
-r(x) = \sum_{j=0}^{N-1} \alpha_j x_j
+r(x) = \sum_{j=0}^{N-1} \alpha_j x^j
 \end{equation}
 This is great, and we also know how to set the $w_i$. These are
-derived in the same way as for Simpson's rule.  Using the appropriate
+derived in the same way as for Simpson's rule.
+Using the appropriate
 linear set of equations analogous to Equation \ref{eq:weights}, you
 can express the solution for the coefficients $\alpha_j$ in terms of
 values of the function $f(x_i)$, which by design is equal to $r(x_i)$
-at the chosen points, and then given the closed form of the integral
-of the polynomial, this translates into a form for $w_i$.
+at the chosen points, and then given the closed form of the integral 
+of the polynomial, this translates into a form for $w_i$. We can
+proceed as follows.
+\begin{eqnarray}
+\int_{-1}^{1} {\rm d}x f(x) &=& \sum_{i=0}^{N-1} w_i r(x_i)\cr
+\int_{-1}^{1} {\rm d}x r(x) &=& \sum_{i=0}^{N-1} w_i
+\sum_{j=0}^{N-1} \alpha_{j} x_i^{j}\cr
+\sum_{j=0}^{N-1} \frac{\alpha_j}{j!} \left[(1)^{j+1} -
+(-1)^{j+1}\right] &=& \sum_{i=0}^{N-1} w_i 
+\sum_{j=0}^{N-1} \alpha_{j} x_i^{j}\cr
+\sum_{j=1,3,\ldots}^{N-1} \frac{2 \alpha_j}{j!} &=&
+\sum_{{j}=0}^{N-1}
+\alpha_{j}
+\sum_{i=0}^{N-1} w_i 
+x_i^{j}
+\end{eqnarray}
+Since this has to hold for {\it all} choices of $\alpha_j$, this leads
+to a set of $N$ equations for the $N$ unknown $w_i$ values, from which
+the $w_i$ can be determined. As it happens, the set of $w_i$ that
+solve this set of equations are:
+\begin{equation}
+w_i = \frac{2}{\left(1-x_i^2\right) \left(P_n'(x_i)\right)^2}
+\end{equation}
 
 The notebook shows an implementation given the weights and locations
 determined for $N=4$, and demonstrates performance up to $2N-1$.
@@ -389,7 +412,7 @@ Then it turns out we can find a complete basis set of polynomals that
 are orthogonal under this definition. Legendre Polynomials are just
 one case of this, for $W(x)=1$. The locations are determined by the
 roots of these new polynomials, and the weights are determined in an
-analogous manner.
+analogous manner to the Gauss-Legendre case.
 
 As an example, look at the problem:
 \begin{equation}
@@ -399,8 +422,8 @@ If we use regular Gaussian quadrature, our answers are very bad.
 
 But we can define $W(x)=1/\sqrt{1-x^2}$ and $f(x)=1$. This is called
 {\it Gauss-Chebyshev} quadrature. SciPy doesn't have this directly,
-but it does have a routine that gives you the weights.  This works
-very well for integrating over this singularity.
+but it does have a routine that gives you the roots and weights.  This
+works very well for integrating over this singularity.
 
 Another generally useful form has $W(x) = \exp(-x^2)$. This yields
 Gauss-Hermite polynomials, and Gauss-Hermite quadrature. A slightly
@@ -467,7 +490,7 @@ So typically $E_c/kT \sim 1000$.
 
 For convenience and to keep us as safe as possible from underflows and
 overflows, we want to integrate over variables that are closer to
-unity, not $10{-15}$. Also, if we look at the integrand it is clear
+unity, not $10^{-15}$. Also, if we look at the integrand it is clear
 that $E_c$ and $kT$ do not matter individually (except as overall
 scale factors), just their ratio; we can avoid doing some integrals if
 we cast results just in terms of the ratio.  So it makes sense to
