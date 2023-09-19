@@ -7,6 +7,7 @@ vpath %.tex $(TEXDIR)
 ALL= \
 	$(PDFDIR)/syllabus.pdf \
 	$(PDFDIR)/example.pdf \
+	$(PDFDIR)/projects-general.pdf \
 	$(PDFDIR)/ps-1.pdf \
 	$(PDFDIR)/ps-2.pdf \
 	$(PDFDIR)/ps-3.pdf \

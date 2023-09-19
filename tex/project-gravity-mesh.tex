@@ -110,9 +110,10 @@ Transform. Instead, there is a discrete version of this formula.
   this Green's function.  Hockney \& Eastwood, around pages 212--213,
   explain this. Implement this method and show that it works as
   expected for a delta function source.
+\item Test a spherically symmetric case for the potential against the
+  analytic expectation, to estimate the approproximation error.
 \item Use your implementation to calculate the potential for several
-  cases with different widths and axis ratios of the Gaussian. Test
-  a spherically symmetric case against the analytic expectation.
+  cases with different widths and axis ratios of the Gaussian.
 \end{itemize}
 
 \section{Integrating the equations in time}
@@ -132,9 +133,44 @@ system forward in time. The equations for each particle are:
   half-integer step, update the velocities according to the gradient
   of the potential at the location of the particle; use a first-order
   method to calculate the gradient. 
-\item Run the particle mesh for several initial Gaussian distributions
-  of particles at rest. Make some animations showing what the
-  particles do. 
+\item Motivate a choice for your time step---is there a physically
+  motivated choice {\it a priori}? Is there a way to set the time step
+  dynamically? 
+\item Run the simulation starting from an initial spherical
+  distributions of particles at rest. Make some plots showing what the
+  particles do over time and how the density field and its radial
+  dependence changes. 
+\item Test the convergence of the method by running at higher
+  resolution and comparing the results results between two runs.
+\end{itemize}
+
+\section{Exploring the Physics of Gravitational Collapse}
+
+We can now use the code to explore some basic things about
+gravitational collapse. Please note that {\it these} questions are
+experimental, in the sense that I have no guarantee about what you
+will find using the methods implemented here. As you proceed, feel
+free to send me results or questions!
+
+\begin{itemize}  
+\item Try initial distributions with different axis ratios. How does
+  the collapse differ in these cases?
+\item The scalar Virial Theorem (Landau \& Lifshitz, {\it Mechanics},
+  \S10) states that in steady state the total potential energy $U$ and
+  kinetic energy $K$ are related by $U = -2K$. Plot these two
+  quantities against each other as a function of time for some of your
+  runs.
+\item Can you use the Virial Theorem to predict how the size of the
+  initial distribution will change when the distribution starts at
+  rest?
+\item For an initially spherical distribution, can you assign an
+  initial set of velocities that will lead to a nearly no evolution? 
+\item Use an initially spherical distribution, but assign the
+  velocities in such a way that there is net angular momentum. For
+  this to have a significant effect the angular momentum per particle
+  should be a substantial fraction of the average momentum per
+  particle times the characteristic size of the system. What happens
+  to the distribution over time?
 \end{itemize}
 
 \end{document}

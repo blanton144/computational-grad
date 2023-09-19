@@ -24,11 +24,12 @@ where $x_i$ are spaced between $a$ and $b$ with separations ${\rm
 \begin{answer}
 Just to perform this sum with some finite ${\rm d}x$:
 \begin{equation}
-\int_a^b {\rm d}x f(x) = \left[{\rm d}x \sum_{i=1}^{(b-a)/{\rm d}x}
-  f(x_i) \right]
+\int_a^b {\rm d}x f(x) = {\Delta}x \left[
+\frac{1}{2} \left(f(x_0) + f(x_1)\right)
+\sum_{i=1}^{(b-a)/{\Delta}x - 1} f(x_i) \right]
 \end{equation}
-where $x_i$ are spaced between $a$ and $b$ with separations ${\rm
-  d}x$.
+where $x_i$ are spaced between $a + \Delta x / 2$ and $b - \Delta x
+ /2$ with separations ${\rm d}x$.
 \end{answer}
 
 This is just a particular case of the more general form that most
@@ -60,11 +61,26 @@ For equally spaced points, then $w_i = {\rm d}x$, except for $w_1=
 w_{N} = {\rm d}x/2$.
 
 \noindent {\bf For what sort of function is the trapezoid rule exactly
-  correct?} 
+  correct?}
 
 \begin{answer}
 For a linear function. Of course, this property is not very useful!!
 \end{answer}
+
+But \ldots clearly the trapezoid rule and the piecewise constant are
+the same. What is going on? What is going on is that the linear
+interpolation introduces a linear term in the approximation, but over
+the integration interval, that linear term integrates to zero because
+it is odd. So really a 0th order polynomial interpolation of the
+function (piecewise constant) gives the same precision in the integral
+as a 1st order polynomial interpolation of the function.
+
+In either case we expect the remainder error to scale with the
+next-order non-zero term in a polynomial expansion, or second order in
+this case. This means that in each term of the sum the next-order
+missing term is of order $\sim \Delta x^2$, which should tell us the
+approximation error. In the notebook examples we can explore this
+scaling.
 
 \section{Simpson's rule}
 
@@ -149,6 +165,21 @@ that can be used to determine the coefficients of the function, and
 thus its integral.  So this yields a system of $N$ linear equations,
 with $M+1$ unknowns. So to guarantee a solution, you need $N=M+1$.
 \end{answer}
+
+Note that the $\beta$ term integrated out. This is for the same reason
+that the linear term integrated out in the trapezoidal rule, making it
+the same as the piecewise constant rule. Consider now a cubic
+approximation:
+\begin{equation}
+  f(x) = \alpha + \beta y + \gamma y^2 + \epsilon y^3
+\end{equation}
+Let's say we interpolated the function with these parameters and the
+integrated. This time the linear {\it and} cubic terms would drop out.
+
+This means that the Simpson's rule approximation error doesn't involve
+any cubic terms in the interpolation function, but quartic terms. This
+terms scale as $\Delta x^4$, and we can use the notebook to show how
+this scaling works.
 
 These methods are good methods, but it turns out we can be even
 cleverer. But before we do so, we have a little bit of work to do.

@@ -15,27 +15,41 @@ light will be focused at a single point. However, because light is a
 wave, in fact it will form a finite-sized image at the focus. The size
 and shape of the image is related to the aperture of the telescope.
 
-Specifically, the image formed (the point spread function) can be
-shown to be the squared amplitude of the Fourier transform of the
+Specifically, the image formed (the point spread function, or PSF) can
+be shown to be the squared amplitude of the Fourier transform of the
 complex pupil function:
 \begin{equation}
-P(r, \phi) \exp\left(-ik W(r,\phi)\right)
+P(x,y) = P_r(x, y) \exp\left(-i 2\pi W(x, y) / \lambda\right)
 \end{equation}
-where $P$ is a function of position on the aperture, in a coordinate
-system centered on the aperture axis of symmetry, and $W$ is a phase
-shift (induced, for example, by imperfections in the shape of the
-mirror). $k= 2\pi/\lambda$ is the wavenumber of the light wave.
+where $P_r$ is a function (between 0 and 1) of position on the
+aperture and $W$ is a phase shift (induced, for example, by
+imperfections in the shape of the mirror, or by the
+atmosphere). $\lambda$ is the wavelength of the light wave.
+
+More specifically, the PSF in the focal plane coordinate system of
+$x_f$ and $y_f$ can be written:
+\begin{equation}
+{\rm PSF}(x_f, y_f) = {\rm FT}\left[P(x, y)\right]\left(k_x=
+\frac{x_f}{\lambda f}, k_y = \frac{y_f}{\lambda f}\right),
+\end{equation}
+where $f$ is the focal length. Note that the relationship between
+incoming angular scale $\Delta\theta$ and displacement in the focal
+plane $\Delta x_f$ is
+\begin{equation}
+\frac{\Delta x}{\Delta\theta} = f
+\end{equation}
+so $k_x$ in the Fourier Transform is evaluated at $\theta_x /
+\lambda$, and same in $y$. We call it $\theta$ because it corresponds
+to the incoming angle on the sky.
 
 In the simplest case, $P(r, \phi)$ is just $1$ within some radius
 $D/2$, and $0$ outside.  In this case, the image formed is:
 \begin{equation}
-I = C\left(\frac{J_1(x)}{x}\right)^2
+I = C\left(\frac{J_1(\pi r_f)}{\pi r_f}\right)^2
 \end{equation}
-where $J_1$ is the first-order Bessel function, and $x=\pi
-D\theta/\lambda$, and $\theta$ is a radial coordinate in the focal
-plane related to the input angle of light into the telescope (we call
-it $\theta$ because it corresponds to an angle on the sky). This is
-known as the Airy pattern.
+where $J_1$ is the first-order Bessel function, $r_f=
+D\theta/\lambda$, and $\theta$ is radial component of the input angle
+of light into the telescope.  This is known as the Airy pattern.
 
 \section{Prep work}
 
@@ -52,9 +66,9 @@ known as the Airy pattern.
   explicit integral.
 \item Many reflective telescopes have a Cassegrain design
   (\href{https://en.wikipedia.org/wiki/Cassegrain_reflector}{\color{blue}
-  see Wikipedia}) which causes the aperture to be a donut, with a hole
-  in the middle. Can you write analytically (in terms of $J_1$) what
-  you expect the PSF to be? Plot the result.
+  see Wikipedia}), which causes the aperture to be a donut, with a
+  hole in the middle. Can you write analytically (in terms of $J_1$)
+  what you expect the PSF to be? Plot the result.
 \item We will want to simulate small imperfections in the phases from
   different causes. To do so it will be useful to be able to create
   {\it Gaussian random fields}. These are random fields whose values
