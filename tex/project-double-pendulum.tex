@@ -48,7 +48,9 @@ section).
 \item Using fourth-order Runge-Kutta construct a piece of code that
   will solve this problem (it is okay to use the implementation from
   {\tt scipy}). Have it output the time steps to a file (this will be
-  convenient for plotting later)
+  convenient for plotting later).
+\item Conceive of and write at least one unit test to test components
+  of the code.
 \item Create a piece of code that will solve this with the leap-frog
   method (again with the ability to output the time steps).
 \item Create a piece of code that will create an animation of the
@@ -56,6 +58,8 @@ section).
 \item Using the initial conditions of part (b) of the exercise,
   compare the answers of the two integrators for the evolution of
   $\theta_1$ and $\theta_2$.
+\item Test the convergence of each integrator as a function of time
+  step size.
 \item With the same initial conditions, test the conservation of
   energy for each integrator.
 \end{itemize}
@@ -84,6 +88,7 @@ section plots all of those values.
    energy. Use energies just above the energies of the lowest three
    stationary points, as these illustrate the different regimes of
    behavior.
+\item {\bf Lyapunov test}
 \end{itemize}
 
 \end{document}

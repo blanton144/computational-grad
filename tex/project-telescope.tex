@@ -94,12 +94,20 @@ of light into the telescope.  This is known as the Airy pattern.
     produced and comment on the differences.
 \end{itemize}
 
-\section{Calculating PSFs}
+\section{Calculating Ideal PSFs}
 
 \begin{itemize}
 \item Perform a numerical FFT of a simple circular aperture, in order
-  to verify the above result in detail. Show how the size of the PSF
-  varies with aperture size.
+  to verify the above result in detail. Note that a discrete FFT is
+  effectively a FFT of a periodically repeated pattern, which is {\it
+    not} what you want. To simulate an isolated aperture, you should
+  make the size of the grid at least twice the size of the aperture
+  itself.
+\item Write at least one unit test to test your code.
+\item Compare the residuals between your calculation and the analytic
+  calculation, for different choices of the grid resolution and size
+  relative to the aperture.
+\item Show how the size of the PSF varies with aperture size.
 \item For a Cassegraine telescope, to hold the secondary mirror in
   place there need to be some structural elements.  Often these take
   the form of several struts holding it in place, which cause
@@ -109,21 +117,33 @@ of light into the telescope.  This is known as the Airy pattern.
   to reproduce the diffraction spikes (roughly) using your model. Do
   you notice anything about the patterns of color in the diffraction
   spikes that you can explain with your model?
-\item Small imperfections in the mirror cause phase shifts. Simulate
-  such shifts in your model by creating a Gaussian random field for
-  the phase offsets $W$ (which is in the same units as $\lambda$) in
-  each pixel. Use a $P(k)$ with power at large $k$. Under what
-  conditions do you expect these shifts to become a major problem? Can
-  you verify that?
+\end{itemize}
+
+\section{Calculating PSFs in Imperfect Systems}
+
+\begin{itemize} 
+\item Small imperfections in the mirror cause phase shifts, because
+  they change the path length of the light in a way that depends on
+  location in the aperture. Simulate such shifts in your model by
+  creating a Gaussian random field for the phase offsets $W$ (which is
+  in the same units as $\lambda$) in each pixel. Use a $P(k)$ with
+  power at large $k$. Under what conditions do you expect these shifts
+  to become a major problem? Can you verify that?
 \item For a ground-based telescope, the atmosphere causes the light
   coming into the telescope to not be a plane wave. Instead it is
   ``wrinkled'' with a coherence length of about 20 cm. Create a
   Gaussian random field whose power spectrum cuts off on smaller
-  scales, and above those scales has fluctuations large compared to
-  the wavelength of the light. The random field should look ``smooth''
-  on small scales.  How do these errors affect the point spread
-  function?
+  scales, and above those scales has fluctuations substantially larger
+  than the wavelength of the light. The random field should look
+  ``smooth'' on small scales.  How do these errors affect the point
+  spread function?
 \end{itemize}
 
+\section{Bonus: DFT vs FFT}
+
+\href{https://academic.oup.com/mnras/article/377/3/1337/1746974}{Gai
+  \& Cancellieri (2007)} argue that a direct discrete Fourier tranform
+calculation is superior to FFT because the former does not require
+padding the grid with zeros. Can you test their proposition?
 
 \end{document}

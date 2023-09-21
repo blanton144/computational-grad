@@ -57,7 +57,7 @@ What is the interpretation of $\epsilon$ in this case?
    satisfy the ordinary differential equation:
    \begin{equation}
       - c \frac{\partial u}{\partial \xi} + \epsilon u \frac{\partial
-        u}{\partial \xi} + \mu \frac{\partial^3 u}{\partial xi^3} = 0.
+        u}{\partial \xi} + \mu \frac{\partial^3 u}{\partial \xi^3} = 0.
    \end{equation}
  \item Further show that a solution to this equation is:
    \begin{equation}
@@ -107,10 +107,15 @@ u_{1,j}$ and $u_{N+1, j} = u_{N,j}$).
 \begin{itemize}
 \item Write an implementation of the finite difference solution to
   these equations.
-\item Set $\mu = 0$, and make the second term linear
-  (i.e. without the prefactor $u$). This is just the advection
-  equation. Show that your code successfully advects any initial
-  waveform. Use boundary conditions of zero, and make the grid big
+\item Design a set of unit tests that will help you determine that
+  the individual elements of your code are working as
+  expected. Implement these unit tests.
+\item Set $\mu = 0$, and make the second term linear (i.e. without the
+  prefactor $u$). This is just the advection equation. Show that your
+  code successfully advects any initial waveform, by comparing
+  quantitatively the waveform at early and late time steps (use a time
+  interval which should propagate the wave an integer number of
+  steps). Use boundary conditions of zero, and make the grid big
   enough that your test stays away from the boundary.
 \item Set $\mu = 0$, but use the nonlinear second term. This
   special case is known as {\it Burgers' equation}. Show what happens
@@ -118,11 +123,14 @@ u_{1,j}$ and $u_{N+1, j} = u_{N,j}$).
   what you thought would happen in the prep work section. Use boundary
   conditions of zero again.
 \item For non-zero $\mu$ and $\epsilon$, set initial conditions of a
-  soliton wave. Show that it propagates as expected. Use boundary
+  soliton wave. Show that it propagates as expected, again through a
+  quantitative comparison with a late time step. Use boundary
   conditions of zero again.
-\item For make initial conditions of two soliton waves, one taller
-  than and ``behind'' the second one. What happens? Use boundary
-  conditions of zero again.
+\item Now test the convergence of the method by increasing the number
+  of grid points by a factor of two and then four.
+\item Make initial conditions of two soliton waves, one taller than
+  and ``behind'' the second one. What happens? Use boundary conditions
+  of zero again.
 \item Finally, try initial conditions of:
   \begin{equation}
     u(x, t=0) = \frac{1}{2} \left[1 -

@@ -54,7 +54,8 @@ ALL= \
 	$(PDFDIR)/project-three-body.pdf \
 	$(PDFDIR)/project-gravity-mesh.pdf \
 	$(PDFDIR)/project-ising.pdf \
-	$(PDFDIR)/project-ligo.pdf  
+	$(PDFDIR)/project-ligo.pdf \
+	$(PDFDIR)/project-hydro.pdf
 
 all: $(ALL) $(DOCDIR)/example.tex
 

@@ -4,7 +4,7 @@
 
 \begin{document}
 
-\title{\bf Computational Physics Project / Three-body problem}
+\title{\bf Computational Physics Project / Three-body (or more) problem}
 
 This project involves integrating gravitational orbits of the sort
 that you might find in planetary or stellar systems. 
@@ -55,7 +55,8 @@ your tools.
   program that takes as input a function that returns a radius given
   the time, and finds the pericenter positions in the orbit and
   determines the period. Use the analytic solution for the two-body
-  problem above to verify your work.
+  problem above to verify your work, and implement this as a unit
+  test.
 \item The equations for the problem can be evaluated in a rotating
   frame. If the rotation is characterized by a constant angular
   velocity $\vec{\Omega}$, then the equations in the rotating frame
@@ -86,14 +87,18 @@ In this stage, you will write a general program to integrate orbits,
 and test it on the two body problem.
   
 \begin{itemize}
-\item Write a module with an integrator using the techniques in 
+\item Write a module with an integrator using the techniques in
   Chapter 8 that will solve the general system of equations for $N$
-  bodies.
+  bodies (not just two!). Pay particular attention to how to adjust
+  the time steps. {\bf This item is a big one}.
+\item Think about what unit tests you want the integrator to pass and
+  implement them.
 \item Test the integrator on the two body problem. Use initial
   conditions for which the system is bound. Use the tools you
   developed above to test the period of the orbit as a function of
   mass and semi-major axis. Test both circular and elliptical cases,
-  and unequal mass cases.
+  and unequal mass cases. Test the convergence of your integrator as a
+  function of the time step condition you use.
 \end{itemize}
 
 \section{Exploring the three-body problem}
@@ -102,8 +107,8 @@ Now you should be able explore how three-body systems behave.
 
 \begin{itemize}
 \item Start with two large, equal mass particles, and one much smaller
-  mass particle. Start the equal mass particles on circular orbits,
-  and verify sure that they stay on those orbits. 
+  mass particle. Start the equal mass particles on circular orbits
+  around each other, and verify that they stay on those orbits.
 \item Test the Lagrange Points discussed above.  Put the small
   particle at those locations, with an angular velocity the same as
   the orbital angular velocity of the large mass particles. Does the
@@ -116,10 +121,11 @@ Now you should be able explore how three-body systems behave.
   particles in a stable circular two-body orbit around the large mass
   particle. Try many different initial conditions for the third
   particle that correspond to circular orbits with a range of
-  different radii. When does the system remain stable and when not?
+  different radii. When does the system remain stable (meaning,
+  neither small particle is ejected) and when not?
 \item Make three similar mass particles and follow their orbits. Can
   you find initial conditions which are stable? (Do not spend a ton of
-  time trying).
+  time trying to).
 \end{itemize}
 
 \section{Bonus ideas}
