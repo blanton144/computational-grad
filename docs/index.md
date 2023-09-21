@@ -37,4 +37,5 @@ finally revised instructions yet):
 | [Three-body problem](pdf/project-three-body.pdf) | 
 | [Double pendulum](pdf/project-double-pendulum.pdf) | 
 | [2D Ising Model](pdf/project-ising.pdf) | 
-| [Korteweg and deVries Equation](pdf/project-soliton.pdf) | 
+| [Solitons in the Korteweg and deVries Equation](pdf/project-soliton.pdf) | 
+| [Hydrodynamics](pdf/project-hydro.pdf) | 
