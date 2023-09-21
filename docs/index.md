@@ -29,8 +29,7 @@ Problem sets:
 | [PS 3](pdf/ps-3.pdf) | 
 
 There are [general instructions](pdf/projects-general.pdf) for the
-class project. The individual projects are below (not a final list or
-finally revised instructions yet):
+class project. The individual projects are below:
 
 | [Gravity on a mesh](pdf/project-gravity-mesh.pdf) | 
 | [Point spread function of a telescope](pdf/project-telescope.pdf) | 
