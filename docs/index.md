@@ -27,6 +27,7 @@ Problem sets:
 | [PS 1](pdf/ps-1.pdf) | 
 | [PS 2](pdf/ps-2.pdf) | 
 | [PS 3](pdf/ps-3.pdf) | 
+| [PS 4](pdf/ps-4.pdf) | 
 
 There are [general instructions](pdf/projects-general.pdf) for the
 class project. The individual projects are below:
