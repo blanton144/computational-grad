@@ -195,6 +195,66 @@ which only works on a function tabulated as an array --- i.e. it uses
 central difference on a set of precomputed points. This is in fact an
 extremely common use case for derivative calculation.
 
+\section{But can't we just take derivatives of functions? ``Autodiff''}
+
+Evaluating finite differences is unavoidable in many cases; e.g. if I
+just have a function pre-evaluated on a grid or (as we will see later)
+in the context of numerically integrating differential equations. But
+for many cases of interest, the function we are evaluating is just
+that: a function composed of a bunch of individually differentiable
+functions.
+
+For example:
+\begin{equation}
+ f(x) = \sin(x^2)
+\end{equation}
+is the result of:
+\begin{equation}
+ f(x) = f_1(f_0(x)))
+\end{equation}
+where $f_0(x) = x^2$ and $f_1(y) = \sin y$.
+
+When we take the derivative of this function analytically we use the
+chain rule:
+\begin{equation}
+ \frac{\partial f}{\partial x} = \frac{\partial f_0}{\partial x} \frac{\partial f_1}{\partial
+ y} = 2x \cos(x^2)
+\end{equation}
+That is, the derivatives of the constituent functions of the composite
+function just multiply. Of course sometimes the function has terms
+(like $f=x^2 + 3x$) but this is even simpler and still is linear (the
+derivatives of $x^2$ and $3x$ just add).
+
+This means that when you calculate the function, in principle the
+computer can calculate its derivative at the same time, as long as it
+knows the derivatives of all the intermediate functions. The notebooks
+show an example of implementing this by hand.
+
+The critical point is that this operation is very straightforward to
+make automated. If every function returns not only its value but its
+derivative, then you just multiply all of those derivatives in a
+perfectly mechanical way. 
+
+{\tt jax} is one example (but not the only one!) of a numerical
+library that performs autodiff. {\tt jax} also is designed to compile
+against GPUs, which are good at highly parallelized computations, like
+doing the same operation on a bunch of different elements of an
+array. This is an important machine learning use case, as is
+autodiff. The notebooks show a simple version of autodiff with {\tt
+jax}. A good example of how it generalizes is showing that it can take
+the {\it second} derivative in the same way. 
+
+But the examples so far are pretty trivial in that they are
+derivatives of a 1-dimensional function. That's not really so
+impressive, or that useful for the machine learning or other
+applications (which fit many dimensional functions so need derivatives
+in {\it lots} of dimensions). But {\tt jax} and other autodiff
+implementations keep track of all the derivatives of all the input
+functions. 
+
+See \href{http://theoryandpractice.org/stats-ds-book/autodiff-tutorial.html}{the
+tutorial in Kyle Cranmer's book for an extensive description}.
+
 \section{Scaling a problem}
 
 Note that in a lot of analyses like that above we assume the
