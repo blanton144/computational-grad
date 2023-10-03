@@ -97,6 +97,112 @@ upper triangular matrix $\mat{U}$, which satisfy:
 \mat{L} \cdot \mat{U} = \mat{A}
 \end{equation}
 
+How do you do this? Look at a $3\times 3$ case:
+\begin{equation}
+\mat{A} = 
+\left(
+\begin{matrix}
+A_{00} & A_{01} & A_{02} \cr
+A_{10} & A_{11} & A_{12} \cr
+A_{20} & A_{21} & A_{22} \cr
+\end{matrix}
+\right)
+\end{equation}
+We can multiply this by a matrix
+\begin{equation}
+\mat{L_0} = 
+\frac{1}{A_{00}}
+\left(
+\begin{matrix}
+1 & 0 & 0 \cr
+- A_{10} & A_{00} & 0 \cr
+- A_{20} & 0 & A_{00} \cr
+\end{matrix}
+\right)
+\end{equation}
+and find:
+\begin{equation}
+\mat{L_0}\cdot\mat{A} = 
+\left(
+\begin{matrix}
+1 & B_{01} & B_{02} \cr
+0 & B_{11} & B_{12} \cr
+0 & B_{21} & B_{22} \cr
+\end{matrix}
+\right)
+\end{equation}
+Then you can then multiply by:
+\begin{equation}
+\mat{L_1} = 
+\frac{1}{B_{11}}
+\left(
+\begin{matrix}
+B_{11} & 0 & 0 \cr
+0 & 1 & 0 \cr
+0 & - B_{21} & B_{11} \cr
+\end{matrix}
+\right)
+\end{equation}
+which leads to:
+\begin{equation}
+\mat{L_1}\cdot\mat{L_0}\cdot\mat{A} = 
+\left(
+\begin{matrix}
+1 & C_{01} & C_{02} \cr
+0 & 1 & C_{12} \cr
+0 & 0 & C_{22} \cr
+\end{matrix}
+\right)
+\end{equation}
+and then you just multiply by:
+\begin{equation}
+\mat{L_2} = 
+\frac{1}{C_{22}}
+\left(
+\begin{matrix}
+C_{22} & 0 & 0 \cr
+0 & C_{22} & 0 \cr
+0 & 0 & 1 \cr
+\end{matrix}
+\right)
+\end{equation}
+and then:
+\begin{equation}
+\mat{L_2}\cdot\mat{L_1}\cdot\mat{L_0}\cdot\mat{A} = 
+\left(
+\begin{matrix}
+1 & D_{01} & D_{02} \cr
+0 & 1 & D_{12} \cr
+0 & 0 & 1 \cr
+\end{matrix}
+\right)
+\end{equation}
+We can then write:
+\begin{equation}
+\mat{A} = 
+(\mat{L_0}^{-1}\cdot
+\mat{L_1}^{-1}\cdot
+\mat{L_2}^{-1})\cdot
+(\mat{L_0}\cdot
+\mat{L_1}\cdot
+\mat{L_2}\cdot\mat{A}) = \mat{L}\cdot\mat{U}
+\end{equation}
+It is straightforward to extend this to any size matrix, so you can
+create $\mat{L_i}$ and just multiply out to get $\mat{U}$. Each
+$\mat{L_i}^{-1}$ can be found through backsubstitution (see below),
+but actually working through this by hand and multiplying out you will find: 
+\begin{equation}
+\mat{L} = 
+\left(
+\begin{matrix}
+A_{00} & 0 & 0 \cr
+A_{10} & B_{11} & 0 \cr
+A_{20} & B_{21} & C_{22} \cr
+\end{matrix}
+\right)
+\end{equation}
+So there is a good way to do the decomposition.
+
 This then means we can solve:
 \begin{equation}
 \label{eq:lyb}
@@ -132,14 +238,16 @@ It takes $\mathcal{O}(N^2)$. For each row, you have to do of order $N$
 operations, and there are $N$ rows. 
 \end{answer}
 
-It turns out that the LU decomposition can be done efficiently, with
-the same scaling with $N$. Now, in most implementations, in fact what
+If you work through the operations above, the LU decomposition itself
+takes $\mathcal{O}(N^3)$; it requires a series of $N$ matrix
+multiplications basically. Now, in most implementations, in fact what
 is done is that the rows of $\mat{A}$ are shuffled in the procedure so
 as to keep the numerics stable.
 
 Also, the decomposition is not unique. There are $N^2 + N$ values to
-set in $\mat{L}$ and $\mat{U}$ but only $N^2$ values in $\mat{A}$. A
-typical choice is to let the diagonal of $\mat{L}$ be just 1s. 
+set in $\mat{L}$ and $\mat{U}$ but only $N^2$ values in $\mat{A}$. The
+typical choice is to let the diagonal of $\mat{L}$ be just 1s, as done
+above. 
 
 \noindent {\bf This gives me a way of solving the equations. How do I
   determine the inverse of $\mat{A}$?}
