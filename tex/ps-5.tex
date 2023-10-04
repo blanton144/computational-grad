@@ -5,22 +5,45 @@
 \begin{document}
 
 \title{\bf Computational Physics / PHYS-UA 210 / Problem Set \#5
-\\ Due October 4, 2019 }
+\\ Due October 17, 2019 }
 
 You {\it must} label all axes of all plots, including giving the {\it
   units}!!
 
 \begin{enumerate}
   \item Exercise 5.17 in Newman.
-  \item Download a ``signal'' as a function of time from
+  \item This problem demonstrates an application of linear algebra to
+    signal analysis. Download a ``signal'' as a function of time from
     \href{https://github.com/blanton144/computational-grad/blob/main/data/signal.dat}{this
       file}. Assume that all the measurements have the same
-    uncertainty (with a standard deviation of 2 in the signal units,
-    though it doesn't affect what you do much in this problem).
-    \begin{enumerate}[a]
+    uncertainty, with a standard deviation of 2.0 in the signal units.
+    \begin{enumerate}
+      \item Plot the data.
       \item Use the SVD technique to find the best third-order
-        polynomial fit in time 
+        polynomial fit in time to the signal. Pay attention to the
+        scaling of the independent variable (time).
+      \item Calculate the residuals of the data with respect to your
+        model. Argue that this is not a good explanation of the data
+        given what you know about the measurement uncertainties.
+      \item Try a much higher order polynomial. Is there any
+        reasonable polynomial you can fit that {\it is} a good
+        explanation of the data? Define ``reasonable polynomial'' as
+        whether the design matrix has a viable condition number.
+      \item Try fitting a set of $\sin$ and $\cos$ functions plus a
+        zero-point offset. As a Fourier series does, use a harmonic
+        sequence with increasing frequency, starting with a period
+        equal to half of the time span covered. Does this model do a
+        ``good job'' explaining the data? Are you able to determine a
+        typical periodicity in the data? You may have noticed a
+        periodicity from the first plot.
     \end{enumerate}
+    This last fit is a version of the {\it Lomb-Scargle} technique for
+    detecting variability in unevenly sampled data, which is designed
+    to be a very close approximation to fitting with a set of Fourier
+    modes. Implementing the method the way we do here (explicitly
+    decomposing the design matrix) is not the usual method, since it
+    is slower than other techniques, but it is the simplest to
+    implement.
 \end{enumerate}
 
 \end{document}
