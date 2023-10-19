@@ -416,8 +416,12 @@ solution.  You can find the solution with the smallest norm in the
 following way. Take all the zero $w_j$, and replace $1/w_j$ with 0
 instead of infinity. What??? Yes.
 
-You can prove this as follows. Say $\mat{W}^{-1}$ is the inverse
-of \mat{W} with the adjustment made for zero $w_j$. Then:
+You can prove this as follows. Let's take the $\vec{x}$ that we get
+from the pseudoinverse, i.e. where $\mat{W}^{-1}$ is the inverse
+of \mat{W} with the adjustment made for zero $w_j$. Then let us
+perturb it with $\vec{x}'$ in the null space. Then we want to ask,
+what choice of $\vec{x}'$ will minimize the norm of $\vec{x}$? So
+let's calculate the norm:
 \begin{eqnarray}
 |\vec{x} + \vec{x}'|
 &=& \left| \mat{V}\cdot\mat{W}^{-1} \cdot \mat{U}^T\cdot \vec{b}
@@ -428,15 +432,45 @@ of \mat{W} with the adjustment made for zero $w_j$. Then:
 + \mat{V}^T\cdot \vec{x}'\right| 
 \end{eqnarray}
 where the last equality follows from the orthonormality of \mat{V}.
-The left term has components only where $w_j\ne 0$. The right term is
-in the null space, so has only components in directions where $w_j=0$.
-We get to choose $\vec{x}$ so we should choose it to be zero.
+The left term has components in coordinate directions only where
+$w_j\ne 0$. The right term is in the null space, rotated by
+$\mat{V}^T$, so has only components in directions where
+$w_j=0$. Therefore 
+\begin{eqnarray}
+|\vec{x} + \vec{x}'|^2
+&=& \left| \mat{W}^{-1} \cdot \mat{U}^T\cdot \vec{b}\right|^2
++ \left| \mat{V}^T\cdot \vec{x}'\right|^2
+\end{eqnarray}
+i.e. minimizing this norm requires $\vec{x}'=0$. The $\vec{x}$ from
+the pseudoinverse minimizes the norm.
 
 If $\vec{b}$ is not in the range, then the same procedure, it turns
 out, yields an $\vec{x}$ then minimizes:
 \begin{equation}
 r = \left|\mat{A}\cdot\vec{x} - \vec{b}\right|
 \end{equation}
+To see this, we again perturb $\vec{x}$ by $\vec{x}'$ (this time any
+$\vec{x}'$). $\mat{A}\cdot\vec{x}' = \vec{b}'$ will live in the range
+of $\mat{A}$.
+
+Now let us consider the residual in this case:
+\begin{eqnarray}
+r^2 &=& \left|\mat{A}\cdot\left(\vec{x}
++ \vec{x}'\right)- \vec{b}\right|^2 \cr
+ &=& \left|\left(\mat{A}\cdot\vec{x} - \vec{b}\right)
++ \vec{b}'\right|^2 \cr
+ &=& \left|\left(\mat{U}\cdot\mat{W}\cdot\mat{W}^{-1}\cdot\mat{U}^T\right)\cdot\vec{b}
++ \vec{b}'\right|^2 \cr
+ &=& \left|\mat{U}\cdot\left[\left(\mat{W}\cdot\mat{W}^{-1}
+ - \mat{1}\right)\cdot\mat{U}^T\cdot\vec{b}
++ \mat{U}^T\vec{b}'\right]\right|^2 \cr
+ &=& \left|\left(\mat{W}\cdot\mat{W}^{-1}
+ - \mat{1}\right)\cdot\mat{U}^T\cdot\vec{b}
++ \mat{U}^T\vec{b}'\right|^2
+\end{eqnarray}
+I don't think this argument from NR is correct, since this residual
+will be zero for a non-single matrix.
+
 
 Therefore, the inverse with the conversion of $w_j = 0\rightarrow
 1/w_j = 0$ yields what we usually want in all cases. It is known as
