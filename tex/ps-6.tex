@@ -11,26 +11,73 @@ You {\it must} label all axes of all plots, including giving the {\it
   units}!!
 
 \begin{enumerate}
-\item Exercise 5.15 in Newman.
-\item This problem will explore interpolation a little so you have
-  some experience with it. We will interpolate values of the $\sin()$
-  function. In each part below, you will interpolate $\sin()$ from a
-  grid of known values at $N$ equally spaced points for $x$ between
-  $0$ and $10\pi$ (inclusive).
-\begin{enumerate}
-\item First, use linear interpolation, writing this code
-  yourself. Test your code for $N=20$, $N=40$, $N=80$, and
-  $N=160$. Quantify the rms residuals of the interpolation relative to
-  $\sin()$ within the range of the grid, as a function of $N$.
-\item Second, go ahead and utilize the {\tt interp1d} class in
-  {\tt scipy.interpolate} to interpolate. Test the {\tt slinear}, {\tt
-    quadratic}, and {\tt cubic} methods in the same way as above.
-\item Third, add a little bit of noise to the values of $\sin()$ that
-  you interpolate between; use Gaussian noise with a standard
-  deviation of 0.1. Show some examples of how the interpolation
-  behaves.
-\end{enumerate}
-  
+\item Calculate derivative of the function:
+  \begin{equation}
+    f(x) = \frac{1}{\sqrt{2\pi}} \exp\left(-x^2/2\right)
+  \end{equation}
+  three ways: (a) analytically; (b) with second-order finite
+  difference; and (c) with {\tt autodiff} using the {\tt jax}
+  implementation. Compare the results, and also compare the speeds.
+\item Here we will perform a simple Principal Components Analysis on a
+  real data set. Download \href{}{this file} which contains the
+  central optical spectra of 9,713 nearby galaxies from the Sloan
+  Digital Sky Survey (note that although this file is 150 Mb, this is
+  a small sample!  larger data sets exist of millions, though they are
+  lower quality). I have done some the work for you by interpolating
+  all of the spectra onto the same restframe wavelength grid. Now do
+  the following:
+  \begin{enumerate}
+    \item Read the data in using the {\tt astropy} package, in
+      particular using {\tt astropy.io.fits}. This data set is a
+      special format called the Flexible Image Transport System (FITS)
+      format, common in astronomy. Its only virtue is that it is a
+      standard in astronomy. You should be able to {\tt pip install
+        astropy}, and then:
+      \begin{verbatim}
+        hdu_list = astropy.io.fits.open('specgrid.fits')
+        logwave = hdu_list['LOGWAVE'].data
+        flux = hdu_list['LOGWAVE'].flux
+      \end{verbatim}
+      {\tt logwave} will be $\log_{10}\lambda$ for $\lambda$ in
+      Angstroms. {\tt flux} will be in $10^{-17}$ erg s$^{-1}$
+      cm$^{-2}$ \AA$^{-1}$, and is the spectrum. Plot a handful
+      of the galaxies.
+    \item There are two processing steps that will make the PCA more
+      meaningful. First, all of these galaxies are at different
+      distances, so their fluxes span a large dynamic range; so first
+      normalize all the fluxes so their integrals over wavelength are
+      the same.
+     \item Second, the mean flux at every wavelength is positive; this
+       will mean that a PCA will spend an eigenvector to explain the
+       mean offset from zero. Instead, we will first subtract off the
+       mean $\vec{f}_m$. This will leave residuals $\vec{r}_i =
+       \vec{f}_i - \vec{f}_m$ of all the galaxies $i$ varying around
+       zero.
+     \item Now perform the PCA. The idea of the PCA is to find the
+       eigenvectors of the covariance matrix of the distribution. This
+       covariance matrix {\it can} be calculated as follows:
+       \begin{equation}
+         \mat{C} = \frac{1}{N_{\rm gal}} \sum_{ij} \vec{r}_i \vec{r}_j
+       \end{equation}
+       where $i$ and $j$ index the galaxies. If I recast the residuals
+       as a matrix $R_{ij}$ this is $\mat{R}\cdot\mat{R}^T$. So
+       construct this matrix (it should be $N_{\rm wave}\times N_{\rm
+         wave}$, and find its eigenvectors. Make a plot of the first
+       five eigenvectors.
+     \item It is also possible to find these eigenvectors directly
+       from $\mat{R}$ using SVD. Consider the linear problem, which
+       finds a set of coefficients $\vec{x}$ to multiply the given
+       spectra by, to explain some spectrum $\vec{f}$:
+       \begin{equation}
+         \mat{R}\cdot\vec{x} = \vec{f}
+       \end{equation}
+       We know the SVD decomposition of \mat{R} yields a rotation
+       $\mat{V}$ into the space where the covariance matrix of the
+       uncertainties in $\vec{x}$ is diagonal. This covariance matrix
+       is $\mat{R}^T\cdot\mat{R}$. So now find the eigenvectors using
+       an SVD decomposition of $\mat{R}$ and show that the vectors are
+       equivalent to what you found before.
+  \end{enumerate}
 \end{enumerate}
 
 \end{document}

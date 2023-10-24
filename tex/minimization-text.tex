@@ -192,7 +192,9 @@ simplicity. If you expand it in Taylor series:
 \end{equation}
 which can be written as:
 \begin{equation}
-\vec{\nabla}f = \left[\vec{\nabla}f \right]_{\vec{0}} +
+\vec{\nabla}f = \left[\vec{\nabla}f \right]_{\vec{0}} + 
+\mat{A}\cdot{\vec{x}}
+\vec{\nabla}f = \vec{b} +
 \mat{A}\cdot{\vec{x}}
 \end{equation}
 where the {\it Hessian matrix} is:
@@ -309,7 +311,8 @@ Except the $\lambda_i$ still require the knowledge of
 $\mat{A}$. Luckily we can use the following trick. If $\vec{g}_i = -
 \nabla f(\vec{P}_i)$, then line minimize and pick the next
 $\vec{g}_{i+1}$ as the gradient again, this is the same as the update
-for $\vec{g}$ above. It does not require $\mat{A}$.
+for $\vec{g}$ above (in the second order limit). It does not require
+$\mat{A}$.
 
 We can see this because in this case:
 \begin{equation}
@@ -365,10 +368,10 @@ just count on your iteration to converge.
  \begin{equation}
    \mat{A}^{-1}_{k+1} = \mat{A}^{-1}_k +
    \frac{\left(\Delta\vec{x}_k\cdot\vec{y}_k
- + \vec{y}_k\cdot\mat{A}^{-1}_k\cdot\vec{y}_k \right) s_k^2}
-   {\left(\vec{s}_k\cdot\vec{y}_k\right)^2}
- - \frac{\mat{A}^{-1}_k\cdot\vec{y}_k\vec{s}_k
- + \vec{s}_k \cdot\vec{y}_k\cdot\mat{A}^{-1}_k}{\vec{s}_k\cdot\vec{y}_k}
+ + \vec{y}_k\cdot\mat{A}^{-1}_k\cdot\vec{y}_k \right) \Delta x_k^2}
+   {\left(\Delta\vec{x}_k\cdot\vec{y}_k\right)^2}
+ - \frac{\mat{A}^{-1}_k\cdot\vec{y}_k\cdot\Delta\vec{x}_k
+ + \Delta\vec{x}_k \cdot\vec{y}_k\cdot\mat{A}^{-1}_k}{\Delta\vec{x}_k\cdot\vec{y}_k}
  \end{equation}
 \end{itemize}
 
