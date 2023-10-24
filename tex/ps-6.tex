@@ -11,21 +11,24 @@ You {\it must} label all axes of all plots, including giving the {\it
   units}!!
 
 \begin{enumerate}
-\item Calculate derivative of the function:
-  \begin{equation}
-    f(x) = \frac{1}{\sqrt{2\pi}} \exp\left(-x^2/2\right)
-  \end{equation}
-  three ways: (a) analytically; (b) with second-order finite
-  difference; and (c) with {\tt autodiff} using the {\tt jax}
-  implementation. Compare the results, and also compare the speeds.
+%\item Calculate derivative of the function:
+  %\begin{equation}
+    %f(x) = \frac{1}{\sqrt{2\pi}} \exp\left(-x^2/2\right)
+  %\end{equation}
+  %three ways: (a) analytically; (b) with second-order finite
+  %difference; and (c) with {\tt autodiff} using the {\tt jax}
+  %implementation. Compare the results, and also compare the speeds.
 \item Here we will perform a simple Principal Components Analysis on a
-  real data set. Download \href{}{this file} which contains the
-  central optical spectra of 9,713 nearby galaxies from the Sloan
-  Digital Sky Survey (note that although this file is 150 Mb, this is
-  a small sample!  larger data sets exist of millions, though they are
-  lower quality). I have done some the work for you by interpolating
-  all of the spectra onto the same restframe wavelength grid. Now do
-  the following:
+  real data set. Note this problem is not as daunting as it might look
+  at first; there are many words because I am walking you through all
+  the steps one by one.  Download
+  \href{https://www.dropbox.com/scl/fi/9cmawl762qtuwiouhmafs/specgrid.fits?rlkey=d2zcco18t5vfbib5nuxmsu411&dl=0}{this
+    file} which contains the central optical spectra of 9,713 nearby
+  galaxies from the Sloan Digital Sky Survey (note that although this
+  file is 150 Mb, this is a small sample!  larger data sets exist of
+  millions, though they are lower quality). I have done some the work
+  for you by interpolating all of the spectra onto the same restframe
+  wavelength grid. Now do the following:
   \begin{enumerate}
     \item Read the data in using the {\tt astropy} package, in
       particular using {\tt astropy.io.fits}. This data set is a
@@ -36,23 +39,29 @@ You {\it must} label all axes of all plots, including giving the {\it
       \begin{verbatim}
         hdu_list = astropy.io.fits.open('specgrid.fits')
         logwave = hdu_list['LOGWAVE'].data
-        flux = hdu_list['LOGWAVE'].flux
+        flux = hdu_list['FLUX'].data
       \end{verbatim}
       {\tt logwave} will be $\log_{10}\lambda$ for $\lambda$ in
       Angstroms. {\tt flux} will be in $10^{-17}$ erg s$^{-1}$
-      cm$^{-2}$ \AA$^{-1}$, and is the spectrum. Plot a handful
-      of the galaxies.
+      cm$^{-2}$ \AA$^{-1}$, and is the spectrum. Plot a handful of the
+      galaxies. Being a physicist and knowing something about the
+      transitions in the Hydrogen atom, do you notice any features
+      that relate to it?
     \item There are two processing steps that will make the PCA more
       meaningful. First, all of these galaxies are at different
       distances, so their fluxes span a large dynamic range; so first
       normalize all the fluxes so their integrals over wavelength are
-      the same.
+      the same. It is close enough to sum over the values to estimate
+      the integral (i.e. don't worry about the fact that
+      $\Delta\lambda$ varies across the grid). Keep each normalization
+      available.
      \item Second, the mean flux at every wavelength is positive; this
        will mean that a PCA will spend an eigenvector to explain the
        mean offset from zero. Instead, we will first subtract off the
-       mean $\vec{f}_m$. This will leave residuals $\vec{r}_i =
-       \vec{f}_i - \vec{f}_m$ of all the galaxies $i$ varying around
-       zero.
+       mean $\vec{f}_m$ of the normalized spectra. This will leave
+       residuals $\vec{r}_i = \vec{f}_i - \vec{f}_m$ of all the
+       galaxies $i$ varying around zero. Keep the mean spectrum
+       available.
      \item Now perform the PCA. The idea of the PCA is to find the
        eigenvectors of the covariance matrix of the distribution. This
        covariance matrix {\it can} be calculated as follows:
@@ -60,10 +69,10 @@ You {\it must} label all axes of all plots, including giving the {\it
          \mat{C} = \frac{1}{N_{\rm gal}} \sum_{ij} \vec{r}_i \vec{r}_j
        \end{equation}
        where $i$ and $j$ index the galaxies. If I recast the residuals
-       as a matrix $R_{ij}$ this is $\mat{R}\cdot\mat{R}^T$. So
-       construct this matrix (it should be $N_{\rm wave}\times N_{\rm
-         wave}$, and find its eigenvectors. Make a plot of the first
-       five eigenvectors.
+       as a matrix $R_{ij}$ this is $\mat{C} =
+       \mat{R}\cdot\mat{R}^T$. So construct this matrix (it should be
+       $N_{\rm wave}\times N_{\rm wave}$), and find its
+       eigenvectors. Make a plot of the first five eigenvectors.
      \item It is also possible to find these eigenvectors directly
        from $\mat{R}$ using SVD. Consider the linear problem, which
        finds a set of coefficients $\vec{x}$ to multiply the given
@@ -74,9 +83,45 @@ You {\it must} label all axes of all plots, including giving the {\it
        We know the SVD decomposition of \mat{R} yields a rotation
        $\mat{V}$ into the space where the covariance matrix of the
        uncertainties in $\vec{x}$ is diagonal. This covariance matrix
-       is $\mat{R}^T\cdot\mat{R}$. So now find the eigenvectors using
-       an SVD decomposition of $\mat{R}$ and show that the vectors are
-       equivalent to what you found before.
+       is $\mat{R}^T\cdot\mat{R}$. Another way to see this is that the
+       covariance can be written:
+       \begin{equation}
+         \mat{R}^T\cdot\mat{R} =
+         \mat{V}\cdot\mat{W}\cdot\mat{U}^T\cdot\mat{U}\cdot\mat{W}\cdot{V}^T
+       \end{equation}
+       The central structure is a diagonal matrix, and $\mat{V}$ is
+       unitary (its inverse is its transpose), so the matrix $\mat{V}$
+       is composed of the right eigenvectors of
+       $\mat{R}^T\cdot\mat{R}$ (with eigenvalues which are the square
+       of the singular values). So now find the eigenvectors using an
+       SVD decomposition of $\mat{R}$ and show that the vectors are
+       equivalent to what you found before. Compare the spend of this
+       to the method in the previous bullet.
+    \item Can you think of reasons you might want to use SVD instead
+      of constructing the covariance matrix and finding its
+      eigenvectors? How does the condition number of $\mat{C}$ compare
+      to that of $\mat{R}$?
+     \item A common use case for PCA is to have components that can
+       compactly approximate data. This can be a form of compression
+       (e.g. storing only the first few PCA coefficients of a spectrum
+       instead of the full spectrum) though it can also be useful in
+       fitting models (e.g. the redshift-fitting algorithm of SDSS
+       uses a PCA basis fit at each redshift and minimizes $\chi^2$
+       over redshift). Each original input spectrum can be expressed
+       as the mean spectrum, plus the full set of coefficients $c_i$
+       multiplying the eigenspectra, times the original
+       normalization. But you can see what happens if you keep the
+       first $N_c=5$ coefficients. Create approximate spectra based on
+       keeping only the first five coefficients. Note that if you
+       think about the math, you don't need to perform {\it another}
+       matrix inversion or decomposition to find the coefficients, you
+       just have to rotate the spectra into the eigenspectrum basis.
+     \item Plot $c_0$ vs $c_1$ and $c_0$ vs $c_2$.
+     \item Now try varying $N_c =1,2,\ldots, 20$ and calculate the
+       squared fractional residuals between the spectra and the
+       reconstituted, approximate spectra as a function of $N_c$. You
+       should see the squared residuals declining. How small is the
+       fractional error for $N_c =20$?
   \end{enumerate}
 \end{enumerate}
 
