@@ -13,11 +13,13 @@ multiple dimensions, due fundamentally to the fact that the gradient
 of a function has special properties helpful to finding its minimum).
 
 In the game of optimization, the most important categorization is
-between {\it convex} and {\it non-convex} problems. Convex problems
-are one with a single optimum --- e.g. a single minimum. So if you
-find a minimum, you have found the minimum. Nonconvex problems can
-have multiple optima --- i.e. more than one local minimum, only one of
-which is a global minimum (unless there's a tie!).
+between {\it convex} and {\it non-convex} problems. Convex functions
+are ones where any line segment between two points on the function's
+surface lie above the function. These functions have a single optimum
+--- e.g. a single minimum. So if you find a minimum, you have found
+the minimum. Nonconvex problems can have multiple optima --- i.e. more
+than one local minimum, only one of which is a global minimum (unless
+there's a tie!).
 
 We start with the simplest example of a convex problem, that of a
 quadratic optimization. We've already seen this problem in the context
@@ -198,8 +200,9 @@ where the {\it Hessian matrix} is:
 A_{ij} = 
 \left[\frac{\partial^2 f}{\partial x_i \partial x_j}\right]_{\vec{0}}
 \end{equation}
-Clearly we can solve this problem!  If you actually knew the Hessian
-matrix you could leap to the bottom of a quadratic.
+If we want to find where $\vec{\nabla}f=0$, we can solve this problem!
+If you actually knew the Hessian matrix you could leap to the bottom
+of a quadratic.
 \end{answer}
 
 \noindent {\bf If you had to choose successive directions to minimize
@@ -335,8 +338,8 @@ update according to how $\vec{h}_i$ evolves under the iteration
 above. If your function is quadratic, you converge in $N$ steps. If
 not, you still proceed quite rapidly to the minimum.
 
-You need derivatives! In multi-dimensions, it is worthwhile to simply
-use finite difference derivatives.
+You need derivatives! This is what you want {\tt autodiff} for
+usually.
 
 \section{Quasi-Newtonian Methods}
 
@@ -346,3 +349,32 @@ its inverse. These are known as quasi-newtonian methods. The most
 commonly used of these nowadays is called
 Broyden-Fletcher-Goldfarb-Shanno (BFGS).  This is the method of choice
 for minimization problems with a moderate number of dimensions.
+
+In outline form, what BFGS does is to track an approximation to the
+inverse of the Hessian matrix. You can find this on the first step or
+just count on your iteration to converge.
+\begin{itemize}
+ \item Search in the direction
+ $-\mat{A}^{-1}\cdot \vec{\nabla}f(\vec{x}_i)$, and find
+ $\Delta\vec{x}_k$.
+ \item Update $\vec{x}_{k+1} = \vec{x}_k + \Delta\vec{x}_k$.
+ \item Calculate $\vec{y}_k = \vec{\nabla}f(\vec{x}_{k+1})
+ - \vec{\nabla}f(\vec{x}_k)$.
+ \item Then use the following approximation for the update to the
+ inverse of the Hessian:
+ \begin{equation}
+   \mat{A}^{-1}_{k+1} = \mat{A}^{-1}_k +
+   \frac{\left(\Delta\vec{x}_k\cdot\vec{y}_k
+ + \vec{y}_k\cdot\mat{A}^{-1}_k\cdot\vec{y}_k \right) s_k^2}
+   {\left(\vec{s}_k\cdot\vec{y}_k\right)^2}
+ - \frac{\mat{A}^{-1}_k\cdot\vec{y}_k\vec{s}_k
+ + \vec{s}_k \cdot\vec{y}_k\cdot\mat{A}^{-1}_k}{\vec{s}_k\cdot\vec{y}_k}
+ \end{equation}
+\end{itemize}
+
+Showing why this is an approximation to the inverse Hessian update is
+well beyond our scope. The key thing here is to remember that
+gradients are essential and make this sort of thing possible.
+
+{\tt jax}, for example, has a BFGS implementation in its version of
+{\tt scipy.optimize}.
