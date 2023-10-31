@@ -136,7 +136,11 @@ w = \frac{3-\sqrt{5}}{2} \approx 0.382
 This is the {\it golden section}.
 
 This method will continually bracket the minimum further and further
-down. 
+down. If you start with $a$, $b$, $c$ such that $b-a$ is $w(c-a)$,
+then you will check a new value $x$ between $b$ and $c$ such that
+$c-x$ is $w(c-a)$. Then no matter whether $f(x)$ or $f(b)$ is smaller,
+either remaining interval is $(1-w)(c-a)$ in size, and the new triplet
+has the same fractional spacing.
 
 \section{Brent's one-dimensional minimization}
 
@@ -172,12 +176,12 @@ practical cases for decades.
 
 The key idea for improving convergence is the same as that used in
 parabolic minimization. Near the minimum of the function, it will be
-quadratic at lowest order. Let's put the minimum at the origin for
-simplicity. If you expand it in Taylor series:
+quadratic at lowest order. Let's put the minimum at $\vec{P}$.  If you
+expand it in Taylor series, where $\vec{x}$ is relative to $\vec{P}$:
 \begin{equation}
-  f(\vec{x}) = f(\vec{0})
-  + \sum_i \left[\frac{\partial f}{\partial x_i}\right]_{\vec{0}}  x_i
-  + \frac{1}{2} \sum_{ij} \left[\frac{\partial^2 f}{\partial x_i \partial x_j}\right]_{\vec{0}}
+  f(\vec{x}) = f(\vec{P})
+  + \sum_i \left[\frac{\partial f}{\partial x_i}\right]_{\vec{P}}  x_i
+  + \frac{1}{2} \sum_{ij} \left[\frac{\partial^2 f}{\partial x_i \partial x_j}\right]_{\vec{P}}
   x_i x_j
 \end{equation}
 
@@ -186,23 +190,27 @@ simplicity. If you expand it in Taylor series:
 \begin{answer}
 \begin{equation}
 \sum_i \frac{\partial f}{\partial x_i} {\hat e}_i = \sum_i
-\left[\frac{\partial f}{\partial x_i}\right]_{\vec{0}} {\hat e}_i +
+\left[\frac{\partial f}{\partial x_i}\right]_{\vec{P}} {\hat e}_i +
 \sum_{ij} \left[\frac{\partial^2 f}{\partial x_i \partial
-    x_j}\right]_{\vec{0}} x_j {\hat e}_i
+    x_j}\right]_{\vec{P}} x_j {\hat e}_i
 \end{equation}
 which can be written as:
 \begin{equation}
-\vec{\nabla}f = \left[\vec{\nabla}f \right]_{\vec{0}} + 
+\vec{\nabla}f = \left[\vec{\nabla}f \right]_{\vec{P}} + 
 \mat{A}\cdot{\vec{x}}
-\vec{\nabla}f = \vec{b} +
+\vec{\nabla}f = - \vec{b} +
 \mat{A}\cdot{\vec{x}}
 \end{equation}
 where the {\it Hessian matrix} is:
 \begin{equation}
 A_{ij} = 
-\left[\frac{\partial^2 f}{\partial x_i \partial x_j}\right]_{\vec{0}}
+\left[\frac{\partial^2 f}{\partial x_i \partial x_j}\right]_{\vec{P}}
 \end{equation}
-If we want to find where $\vec{\nabla}f=0$, we can solve this problem!
+If we want to find where $\vec{\nabla}f=0$, we can solve this problem:
+\begin{equation}
+\mat{A}\cdot\vec{x} = \vec{b}
+\end{equation}
+where $\vec{b} = - \left[\vec{\nabla} f \right]_{\vec{P}}$. 
 If you actually knew the Hessian matrix you could leap to the bottom
 of a quadratic.
 \end{answer}
@@ -259,19 +267,24 @@ eigenvectors:
 \begin{equation}
 \mat{A} = \mat{R}^T \cdot \mat{D} \cdot \mat{R}
 \end{equation}
-where $\mat{D}$ is a diagonal matrix. Thus, any quadratic form can be
-written in the eigenbasis ${\hat e}'$ as:
+where $\mat{D}$ is a diagonal matrix. Or reversing it:
+\begin{equation}
+\mat{D} = \mat{R} \cdot \mat{A} \cdot \mat{R}^T
+\end{equation}
+Thus, any quadratic form can be written in the eigenbasis ${\hat e}'$
+as:
 \begin{equation}
 \sum_i a_i (x_i' - {\bar x}_i)^2
 \end{equation}
 that is, without any cross-terms between different
-dimensions. Furthmore, we can define a more general transformation
+dimensions. Furthermore, we can define a more general transformation
 \mat{T} so that:
 \begin{equation}
-\mat{A} = \mat{T}^T \cdot \mat{I} \cdot \mat{T}
+\mat{I} = \mat{T} \cdot \mat{A} \cdot \mat{T}^T
 \end{equation}
 just by renormalizing the eigenvectors. It is also worth noting at
-this stage that the columns of \mat{T} satisfy:
+this stage that the columns of \mat{T} are parallel to eigenvectors
+and satisfy:
 \begin{equation}
 \vec{t}_i \cdot\mat{A}\cdot \vec{t}_j = \delta_{ij}
 \end{equation}
@@ -291,7 +304,7 @@ update according to:
 with:
 \begin{eqnarray}
 \lambda_i &=& \frac{\vec{g}_i \cdot
-  \vec{h}_i}{\vec{h}_i\cdot\mat{A}\cdot\vec{h}_j} \cr
+  \vec{h}_i}{\vec{h}_i\cdot\mat{A}\cdot\vec{h}_i} \cr
 \gamma_i &=& \frac{\vec{g}_{i+1} \cdot
   \vec{g}_{i+1}}{\vec{g}_i\cdot\vec{g}_i}
 \end{eqnarray}
@@ -309,16 +322,17 @@ this is the case takes more time than I have here.
 
 Except the $\lambda_i$ still require the knowledge of
 $\mat{A}$. Luckily we can use the following trick. If $\vec{g}_i = -
-\nabla f(\vec{P}_i)$, then line minimize and pick the next
+\nabla f(\vec{P}_i)$, and you line minimize and pick the next
 $\vec{g}_{i+1}$ as the gradient again, this is the same as the update
 for $\vec{g}$ above (in the second order limit). It does not require
 $\mat{A}$.
 
-We can see this because in this case:
+We can see this because according to the formulae above the gradient
+is:
 \begin{equation}
 \vec{g}_i = - \mat{A}\cdot\vec{P}_i + \vec{b}
 \end{equation}
-so:
+and after you line minimize the new gradient is:
 \begin{equation}
 \vec{g}_{i+1} = - \mat{A}\cdot (\vec{P}_i + \lambda \vec{h}_i) + \vec{b}
 \end{equation}
@@ -326,14 +340,24 @@ and so:
 \begin{equation}
 \vec{g}_{i+1} = \vec{g}_i - \lambda \mat{A}\cdot\vec{h}_i
 \end{equation}
-with $\lambda$ chosen at the line minimum. This $\lambda$ turns out is
-the same as $\lambda_i$ used above. To show this, note that at the
+with $\lambda$ chosen at the line minimum.  This $\lambda$ turns out
+is the same as $\lambda_i$ used above. To show this, note that at the
 minimum:
+\begin{eqnarray}
+  \vec{h}_i \cdot \nabla f = -\vec{h}_i \cdot \vec{g}_{i+1}  = 0
+\end{eqnarray}
+and so:
 \begin{equation}
-  \vec{h}_i\cdot \nabla f = -\vec{h}_i \cdot \vec{g}_{i+1}  = 0
+  \vec{h}_i \cdot \vec{g}_{i+1} = 
+    \vec{h}_i \cdot \left(\vec{g}_i
+    - \lambda \mat{A}\cdot\vec{h}_i\right) = 0
 \end{equation}
-Then you can solve for $\lambda$ in the above equation and you get the
-value for $\lambda_i$ above.
+which can be solved for:
+\begin{equation}
+\lambda
+= \frac{\vec{h}_i \cdot \vec{g}_i}{\vec{h}_i \cdot\mat{A}\cdot\vec{h}_i}
+\end{equation}
+This is the same as $\lambda_i$ above.
 
 This version of the algorithm is known as the Fletcher-Reeves
 algorithm. You start your minimization along the gradient, then you
@@ -378,6 +402,3 @@ just count on your iteration to converge.
 Showing why this is an approximation to the inverse Hessian update is
 well beyond our scope. The key thing here is to remember that
 gradients are essential and make this sort of thing possible.
-
-{\tt jax}, for example, has a BFGS implementation in its version of
-{\tt scipy.optimize}.
