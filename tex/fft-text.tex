@@ -340,3 +340,102 @@ transform is unity everywhere except at those Fourier components.  The
 kernel in configuration space will be positive and negative.
 
 In the notebook I show a 2D example of this. 
+
+\section{Application: differential equations}
+
+FFTs are used in differential equations as a special case of
+``spectral methods.'' These methods are related to what we did in the
+eigensystem case, modeling waves on a string.
+
+The basic idea is well-illustrated by the case of solving Poisson's
+equation.
+\begin{equation}
+\nabla^2 \phi(\vec{x}) = 4\pi \rho(\vec{x})
+\end{equation}
+In this case for simplicity will consider periodic boundary
+conditions. 
+
+The solution to the equation can be found through Fourier transforms
+as follows:
+\begin{equation}
+- k^2 \tilde\phi(\vec{k}) = 4\pi \tilde\rho(\vec{k})
+\end{equation}
+so:
+\begin{equation}
+\tilde\phi(\vec{k}) = - 4\pi k^{-2} \tilde\rho(\vec{k})
+\end{equation}
+and then we just Fourier transform back. 
+
+We could imagine doing this on a grid with a discrete Fourier
+transform. I.e. Fourier transform to $\tilde\rho$ on a grid, and then
+multiple by $k^{-2}$ and then transform back. But it turns out that
+doing so is not exactly the best thing to do; in particular, the high
+$k$ values cause trouble and lead to errors.  
+
+The better way to think about the problem is to perform a discrete
+Fourier transform on the discrete version of Poisson's equation.
+The discrete transform can be derived by considering the estimate of
+the derivative at each half grid point $n + 1/2$:
+\begin{equation}
+\left.\frac{\partial \phi}{\partial x}\right|_{n+1/2}
+= \frac{\phi_{n+1} - \phi_{n}}{\Delta}
+\end{equation}
+and the second derivative at grid point $n$:
+\begin{eqnarray}
+\left.\frac{\partial^2 \phi}{\partial x^2}\right|_n &=&
+\frac{1}{\Delta}
+\left[\left.\frac{\partial \phi}{\partial x}\right|_{n+1/2}
+- \left.\frac{\partial \phi}{\partial x}\right|_{n-1/2}\right]\cr
+&=&
+\frac{1}{\Delta^2}
+\left[\phi_{n+1} -\phi_n -\phi_n +\phi_{n-1}\right]\cr
+&=&
+\frac{1}{\Delta^2}
+\left[\phi_{n+1} - 2 \phi_n +\phi_{n-1}\right]
+\end{eqnarray}
+This makes the equations as follows:
+\begin{equation}
+\frac{1}{\Delta^2}
+\left[\phi_{n+1} - 2 \phi_n +\phi_{n-1}\right] =
+4\pi \rho_n
+\end{equation}
+Now think about the Fourier transform of this equation. We need the
+Fourier transforms:
+\begin{eqnarray}
+\phi_n &=& \Delta \sum_m \tilde\phi_m \exp\left[2\pi i mn / N\right] \cr
+\phi_{n+1} &=& \Delta \sum_m \tilde\phi_m \exp\left[2\pi i m (n+1) / N\right] \cr
+&=& \Delta \sum_m \tilde\phi_m \exp\left[2\pi i m /N\right]
+   \exp\left[2\pi i m n / N\right] \cr
+\phi_{n-1} &=& \Delta \sum_m \tilde\phi_m \exp\left[2\pi i m (n-1) / N\right] \cr
+&=& \Delta \sum_m \tilde\phi_m \exp\left[- 2\pi i m /N\right]
+   \exp\left[2\pi i m n / N\right]
+\end{eqnarray}
+So the Fourier transforms of these three terms are related by:
+\begin{eqnarray}
+\mathrm{FT}(\phi_n) &=& \tilde\phi_m \cr
+\mathrm{FT}(\phi_{n+1}) &=& \tilde\phi_m \exp\left[2\pi i m / N\right] \cr
+\mathrm{FT}(\phi_{n-1}) &=& \tilde\phi_m \exp\left[-2\pi i m / N\right]
+\end{eqnarray}
+And the Fourier transform of the discrete Poisson equation becomes:
+\begin{equation}
+\frac{1}{\Delta^2}
+\left[
+\exp\left(2\pi i m /N\right)
++ \exp\left(- 2\pi i m /N\right) - 2 \right] \tilde\phi_m =
+4\pi \tilde\rho_m
+\end{equation}
+or:
+\begin{equation}
+\frac{2}{\Delta^2}
+\left[\cos\left(2\pi m /N\right) - 1\right]
+\tilde\phi_m = 4\pi \tilde\rho_m
+\end{equation}
+and this is the right equation to use. For small $m$ notice that this
+is precisely $-k^2$. But for high $m$ the term is limited in size,
+which prevents small scale terms from dominating.
+
+In the Gravity on a Mesh project, part of the exercise is to design
+this factor for the case of isolated boundary conditions, which is
+somewhat different and has to itself be calculated numerically.
+
+
