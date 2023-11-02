@@ -133,9 +133,10 @@ h_k = \frac{1}{N} \sum_{n=0}^{N-1} H_n \exp(-2\pi i k n/N)
 
 \begin{answer}
 The sums to calculate $H_n$ require a sum over $N$ data points, $N$
-times, so are $N^2$. There are many applications in which you might
-want to have $N$ in the millions. This quickly becomes
-intractable. Luckily this is not necessary.
+times, so the expense up to some prefactor $\alpha$ is $N^2$, or
+$\alpha N^2$. There are many applications in which you might want to
+have $N$ in the millions. This quickly becomes intractable. Luckily
+this is not necessary.
 \end{answer}
 
 A far better way has long been known, called the {\it Fast Fourier
@@ -148,30 +149,66 @@ shown as follows to allow us to :
 H_k &=& \sum_{j=0}^{N-1} \exp(2\pi i jk /N) h_j \cr
 &=& \sum_{j=0}^{N/2-1} \exp(2\pi i (2j) k /N) h_{2j} 
 \sum_{j=0}^{N/2-1} \exp(2\pi i (2j + 1) k /N) h_{2j+1} \cr
-&=& \sum_{j=0}^{N/2-1} \exp(2\pi i j k / (N/2)) h_{2j} 
+&=& \sum_{j=0}^{N/2-1} \exp(2\pi i j k / (N/2)) h_{2j}  +
 \exp(2\pi i k /N) \sum_{j=0}^{N/2-1} \exp(2\pi i j k / (N/2)) h_{2j+1} \cr
 &=& H_k^e + W^k H_k^o
 \end{eqnarray}
 where $H_k^e$ is the Fourier transform of the even components, $H_k^o$
 is the Fourier transform of the odd components, and $W=\exp(2\pi i
-/N)$. 
+/N)$. Note that each $H_k^e$ has only $N/2$ unique values, since it is
+a Fourier transform of length $N/2$; as you loop over $k$, it just
+repeats itself.
+
+Imagine you did this exactly once, where the smaller Fourier
+transforms you did naively. You would do {\it two} Fourier transforms,
+each of expense $\alpha (N/2)^2$. This would produce $H_k^e$ and
+$H_k^o$ (both periodic with length $(N/2)$). Then you put these
+together by looping over all $k$. The total expense is $N +
+2\times \alpha (N/2)^2 = N + \alpha N^2/2$, or half of the original
+expense we quoted above for large $N$. Note though that we keep the
+leading linear term for reasons that soon will become clear.
+
+But why do the smaller Fourier transforms na\"ively? You should do
+them using this same clever method. In this case:
+\begin{equation}
+H_k^e = H_k^{ee} + W^{2k} H_k^{eo}
+\end{equation}
+where $ee$ means ``even parts of the even parts'' and $eo$ means ``odd
+parts of the even parts.'' Note very importantly that $2k$ appears
+because each Fourier transform is over a $N/2$-sized array; this must
+be the case because $H_k^e$ is periodic over $N/2$.
+
+Then the expense for each of those is not $(N/2)^2$ but $N/2 +
+2 \times\alpha (N/4)^2$. Then the total is $2 N + 4\times \alpha
+(N/4)^2 = 2 N + \alpha N^2/4$, even smaller. Repeat it again, and you
+find a cost of $3N + \alpha N^2/8$. If you do this $\log_2 N$ times,
+you get down to $N=1$ and the first term is $N \log_2 N$ and the
+second term goes to $\alpha N^2 / N$ = $\alpha N$. So it is the first
+term that dominates.
 
 So you can take any Fourier transform it, and break it in two. Then
 you can take each piece, and break that in two, and so on. Until you
 have a one-element Fourier transform to perform. A one element
-discrete Fourier Transform is just equal to that same element.
+discrete Fourier Transform is just equal to that same element. So
+actual $\alpha$ is 1, or just the cost of figuring out which element
+you have narrowed down to.
 
 If you label the Fourier transform at each leaf as something like
-$H_k^{eeoeoe\ldots}$, then it corresponds to some $h_n$. Which $h_n$?
-Each time you sort into even and odd, you are taking the lowest bit of
-significance, and reordering the whole array according to that. Then
-you take the next bit, and reorder according to that. This means that
-you are taking the index $k$, reversing its bits, and identifying $k$
-with its bit-reversal corresponding to $n$.  
+$H_k^{eeoeoe\ldots}$, then it corresponds to some $h_j$ (which is the
+same for all values of $k$). Which $h_j$?  Each time you sort into
+even and odd, you are taking the lowest bit of significance, and
+reordering the whole array according to that. Then you take the next
+bit, and reorder according to that. This means that you are taking the
+index $k$, reversing its bits, and identifying $k$ with its
+bit-reversal corresponding to $j$.
 
-To take the FFT, you can then just reorder $h_n$ appropriately, and
-then apply the Danielson-Lanczos lemma in a tree-like fashion.  This
-leads to $\sim N$ operations executed $\log_2 N$ times. 
+To take the FFT, you can then just reorder $h_j$ appropriately, and
+then apply the Danielson-Lanczos lemma in a tree-like fashion, using
+the fact that each stage each subtransform is periodic with period 2,
+4, $\ldots$, $N/2$ as you go up in levels.  This leads to $\sim N$
+operations executed $\log_2 N$ times. It is a book-keeping nightmare
+(just look at the code in {\it Numerical Recipes} for example) but it
+is worth it.
 
 Further tricks can be applied to reduce the number of $\cos()$ and
 $\sin()$ calls.
