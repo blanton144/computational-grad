@@ -1,0 +1,25 @@
+
+\item Exercise 6.2 in Newman.
+\item Consider Example 6.2 in Newman. We will alter this problem to
+  handle a heterogeneous set of masses.
+  \begin{enumerate}
+    \item Rewrite Equation 6.56 with a heterogeneous set of masses
+      $m_i$. 
+    \item Alter the code in {\tt springs.py} to use a heterogeneous
+      set of masses. Test it for constant mass $m_i = 1$ and
+      demonstrate that it gets the same results as the unaltered code.
+    \item Test putting a large mass near the middle, $m_{13} = 10$,
+      with $m_i = 1$ otherwise. 
+    \item Test putting a small mass near the middle $m_{13} = 0.1$.
+  \end{enumerate}
+\item We will further consider Example 6.2 in Newman, now altering it
+  to account for dissipation. 
+  \begin{enumerate}
+    \item Consider the case that there is a dissipative term on the
+      RHS of Equation 6.50 with an amplitude $-\gamma \dot\xi_i$.
+      Alter the code in {\tt springs.py} so that it uses the {\tt inv}
+      function in {\tt numpy.linalg} instead of performing the inverse
+      itself.
+    \item How does $x_i$ vary with position and $\gamma$?
+  \end{enumerate}
+\end{enumerate}
