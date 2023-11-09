@@ -200,8 +200,8 @@ When we insert this into the integral we find the second term vanishes:
 This assumes that we have an estimate of $f(\Delta t /2)$.  However,
 since this is multiplied by $\Delta t$, to remain second-order we only
 need this estimate to be good to first-order. Thus, the Euler
-algorithm can be used to estimate the midpoint and we get the
-procedure above.
+algorithm (good to first-order) can be used to estimate the midpoint
+and we get the procedure above.
 
 This second-order Runge-Kutta algorithm requires two determinations of
 $f$, not one. So it will only be useful when the $\Delta t^2$ term is
@@ -221,8 +221,8 @@ final answer.
 \vec{k}_3 &=& \Delta t \vec{f}(\vec{w}_n + \frac{1}{2} \vec{k}_2, t_n +
 \frac{1}{2} \Delta t) \cr
 \vec{k}_4 &=& \Delta t \vec{f}(\vec{w}_n + \vec{k}_3, t_n + \Delta t) \cr
-\vec{w}_{n+1}  &=& \vec{w}_n + \frac{1}{6} k_1
-+ \frac{1}{3} k_2 + \frac{1}{3} k_3 + \frac{1}{6} k_4
+\vec{w}_{n+1}  &=& \vec{w}_n + \frac{1}{6} \vec{k}_1
++ \frac{1}{3} \vec{k}_2 + \frac{1}{3} \vec{k}_3 + \frac{1}{6} \vec{k}_4
 \end{eqnarray}
 This, it turns out, has error terms $\mathcal{O}(\Delta t^5)$. 
 
@@ -238,22 +238,28 @@ pairs of steps, and then comparing the answer using two steps to using
 one step twice as big. This adds at most 50\% more function
 evaluations.
 
-The error in one step can be written as $\Delta t^2 \phi$, where
-$\phi$ is some constant.
-The two answers will therefore be:
+The error in one step can be written as $(\Delta t)^5 \phi$, where
+$\phi$ is some constant.  The two answers will therefore be:
 \begin{eqnarray}
-w(t+ 2\Delta t) &=& w_1 + 2 (\Delta t)^5 \phi + \mathcal{O}(\Delta
+w(t+ 2\Delta t) &=& w_2 + 2 (\Delta t)^5 \phi + \mathcal{O}(\Delta
 t^6) \quad\mathrm{two~steps} 
 \cr
-w(t+ 2\Delta t) &=& w_2 + (2\Delta t)^5 \phi + \mathcal{O}(\Delta t^6)
+w(t+ 2\Delta t) &=& w_1 + (2\Delta t)^5 \phi + \mathcal{O}(\Delta t^6)
 \quad\mathrm{one~step} 
 \end{eqnarray}
-where $\phi$ is a constant of $\mathcal{O}(\Delta t^5)$. The
-difference gives you:
+where $\phi$ is a constant of $\mathcal{O}(\Delta t^5)$. The second
+equation is clearly true. The first one is a little less obvious,
+since surely $\phi$ depends on the value of $\vec{f}$; to understand
+it, remember leading order terms of the first $\Delta t$ step already
+are fifth order, and $\vec{f}$ is multiplied by $\Delta t$ to get
+$\vec{w}$, so the differences are higher order than fifth. 
+
+So then the difference gives you:
 \begin{equation}
-w_2 - w_1 \approx 30 (\Delta t)^5 \phi
+  \left|w_2 - w_1\right| \approx 30 (\Delta t)^5 \phi
 \end{equation}
-The single-step absolute value error can therefore be estimated as:
+The single-step (of $\Delta t$) absolute value error can therefore be
+estimated as:
 \begin{equation}
 \epsilon \approx \Delta t^5 \phi \approx \frac{\left|w_2 -
   w_1\right|}{30}
@@ -264,11 +270,11 @@ specified target level $\delta$, in {\it per unit time} units. Per
 time step $\Delta t$, the corresponding error per step would be
 $\epsilon = \delta\Delta t$.
 
-After each pair of steps, calculate $\epsilon$. If $\epsilon < \Delta
-t \epsilon$, continue from $t+ 2\Delta t$ (using $w_2$) but change the
+After each pair of steps, calculate $\epsilon$. If $\epsilon < \delta \Delta
+t $, continue from $t+ 2\Delta t$ (using $w_2$) but change the
 step size to a new one $\Delta t_n$ going forward to satisfy:
 \begin{equation}
-  \delta \Delta t_n = \Delta t_n^5 \phi
+  \epsilon_n = \delta \Delta t_n = \Delta t_n^5 \phi
   = \frac{\Delta t_n^5}{\Delta t^5} \Delta t^5 \phi
   = \frac{\Delta t_n^5}{\Delta t^5} \frac{\left|w_2 - w_1\right|}{30}
 \end{equation}
@@ -284,13 +290,13 @@ and therefore:
 It is wise to limit the increase in $\Delta t$ (the right hand factor)
 to no more than a factor of two or so.
 
-But if $\epsilon > \Delta t \epsilon$, then also set $\Delta t_n$
+But if $\epsilon > \delta \Delta t $, then also set $\Delta t_n$
 using the same formula, but start over from $t$ (that is, do not
 accept the initial measurement using the initial $\Delta t$.
 
 There is a further improvement that can be made. We have an estimate
 of the one step error with step-size $\Delta t$ to accuracy
-$\mathcal{0}(\Delta t^6)$:
+$\mathcal{O}(\Delta t^6)$:
 \begin{equation}
   (\Delta t)^5 \phi \approx \frac{w_2 - w_1}{30}
 \end{equation}
