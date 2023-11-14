@@ -392,17 +392,17 @@ $H$. But within each one, we will be dividing it into intermediate
 steps; for each step $H$ we will take 1 step of size $h_1 =H$, 2 steps
 of size $h_2 = H / 2$, 3 steps of size $h_3 = H/3$, 4 steps of size
 $h_4 = H / 4$, \ldots up to about 8 steps.  Each will give an answer
-for the full integration across step $H$, and we will the series to
-extrapolate to a more exact answer.
+for the full integration across step $H$, and we will use the series
+to extrapolate to a more exact answer.
 
 The Bulirsch-Stoer works on the basis that the integration method for
 the intermediate steps have only even-order error terms. That is, that
 the leading order error will scale as $\mathcal{O}(h_n^{2})$, and that
-if that is cancelled, the next leading order will be
+if that is cancelled, the next leading order errors will be
 $\mathcal{O}(h_n^4)$, etc. If you have some number of steps $n$, then
-you can denote as $R_{n,1}$ the $\mathcal{O}(h_n^{2})$ estimate.  You
-can denote further as $R_{n,m}$ estimates with errors
-$\mathcal{O}(h_n^{2m})$. 
+you can denote as $R_{n,1}$ the estimate with $\mathcal{O}(h_n^{2})$
+errors.  You can denote further as $R_{n,m}$ estimates with errors
+$\mathcal{O}(h_n^{2m})$.
 
 $R_{n,m}$ will relate to the real answer as:
 \begin{equation}
@@ -425,20 +425,20 @@ and in detail you can show this to be:
 \end{equation}
 
 This equation allows us to build successively higher-order
-estimates. One starts with the one-step estimate $R_{1,1}$ of order
-$\mathcal{O}(h_1^2)$. Then you make the two-step estimate $R_{2,1}$ of
-order $\mathcal{O}(h_2^2)$. These first two estimates allow you to
-construct the two-step estimate of order $\mathcal{O}(h_2^4)$ from the
-recursion. Then you can similar use the three-step estimate $R_{3,1}$
-and use the previous results and the recursion relation to estimate
-$R_{3,3}$, which is $\mathcal{O}(h_3^6)$. This is getting better and
-better!
+estimates. One starts with the one-step estimate $R_{1,1}$ with errors
+of order $\mathcal{O}(h_1^2)$. Then you make the two-step estimate
+$R_{2,1}$ with errors of order $\mathcal{O}(h_2^2)$. These first two
+estimates allow you to construct the two-step estimate of order
+$\mathcal{O}(h_2^4)$ from the recursion. Then you can similarly use
+the three-step estimate $R_{3,1}$ and use the previous results and the
+recursion relation to estimate $R_{3,3}$, with errors of order
+$\mathcal{O}(h_3^6)$. This is getting better and better!
 
 The error estimate at each step is $c_mh_n^{2m}$. You keep increasing
-$n$ until the error on $R_{n,n}$ is less than the target value, or you
+$n$ until the error on $R_{n,m}$ is less than the target value, or you
 reach some limit, usually $n=8$. If you reach the limit, you make $H$
 smaller, in a manner similar to that used in the adaptive step size
-approach described above. 
+approach described above.
 
 Now we just need to find a way to take the intermediate steps which
 has an error which is an even function of the step size, so it is only
@@ -481,4 +481,61 @@ w_{n, {\rm final}} = \frac{1}{2}\left(w_n + w_n'\right).
 It can be shown that this estimate has the desired property that it
 only has even powers of $h$, by using the last step to cancel the odd
 powers of $h$ introduced in the first step.
+
+\section{Stiff Equations and Implicit Methods}
+
+For equations with more than one solution (i.e. any problem with more
+than one first-order equation) the solutions can have very different
+time scales of evolution. For example, there can be a very quickly
+evolving solution, sometimes just decaying away. Following this
+solution will force your integrator to make many, many steps to avoid
+large errors developing, yet won't actually be important to the
+dynamics. 
+
+Here's an example, of an autocatalytic chemical reaction:
+\begin{eqnarray}
+{\dot x} &=& - 0.04 x + 10^4 y z \cr
+{\dot y} &=& 0.04 x - 10^4 y z - 3\times 10^7 y^2 \cr
+{\dot z} &=& 3\times 10^7 y^2 
+\end{eqnarray}
+This is due to Robertson (1966). As far as I know, it is not actually
+a real set of equations, but there are similar real cases. If you
+start this with $x=1$ and $y=z=0$, $x$ and $z$ complete dominate, with
+$y$ playing a very minor role; but $y$ has a transient at the very
+beginning that is difficult to follow.
+
+A simpler, even more toy version are the equations:
+\begin{eqnarray}
+{\dot x} &=& 998 x + 1998 y \cr
+{\dot y} &=& -999 x - 1999 y 
+\end{eqnarray}
+where $x(t=0)=1$, $y(t=0)=0$.  You can see that these equations are
+very nearly degenerate. If you convert:
+\begin{eqnarray}
+  x &=& 2u -v \cr
+  y &=& -u + v
+\end{eqnarray}
+then you can find:
+\begin{eqnarray}
+   x &=& 2 e^{-t} - e^{-1000x} \cr
+   y &=& - e^{-t} + e^{-1000x} \cr
+\end{eqnarray}
+
+What goes wrong in trying to integrate this? Go back to the single
+equation case:
+\begin{equation}
+ {\dot y} = - c y
+\end{equation}
+i.e. with the solution $y=e^{-cy}$.
+
+For simplicity let's consider the Euler approach to this problem:
+\begin{equation}
+y_{n+1} = y_n + h {\dot y}_n = (1-ch) y_n
+\end{equation}
+If $h>2/c$, then the amplitude of the factor is $>1$, and then this
+grows without bound. So for too large a step, the system isn't just
+inaccurate, it is {\it unstable}. You can take a higher order method,
+but the same principle will apply that you can't take long time steps
+relative to $1/c$. 
+
 
