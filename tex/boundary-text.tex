@@ -179,13 +179,13 @@ matrix, and $\mat{U}$ is the upper part.
 The Jacobi method can be written:
 \begin{equation}
 \mat{D}\cdot\vec{q}^{n+1} = - \left(\mat{L}
-+ \mat{U}\right) \cdot \vec{x}^n + \vec{b}
++ \mat{U}\right) \cdot \vec{q}^n + \vec{b}
 \end{equation}
 
 The Gauss-Siedel method can be written:
 \begin{equation}
 \left(\mat{L} + \mat{D}\right)\cdot\vec{q}^{n+1}
-= - \mat{U}\cdot \vec{x}^n + \vec{b}
+= - \mat{U}\cdot \vec{q}^n + \vec{b}
 \end{equation}
 
 This latter method forms the basis for the idea of {\it successive
@@ -292,7 +292,7 @@ Poisson equation is:
 \end{equation}
 where:
 \begin{equation}
-\rho_J = \cos(\pi/J)
+\rho_J = \cos(\pi/J) \approx 1 - \frac{\pi^2}{2J^2}
 \end{equation}
 
 It further turns out that this choice only is optimal

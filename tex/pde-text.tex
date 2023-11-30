@@ -428,6 +428,17 @@ This method remains stable ($|\xi|<1$) for all $k$ as long as $\alpha
 < 1/2$.
 \end{answer}
 
+The problem in this case is that we are most likely interested in the
+diffusion on much larger scales than a single grid cell. If we are
+interested in some scale $\lambda$, then the number of time steps it
+will take to reach that scale is $N_T \sim (\lambda / \Delta
+x)^2$. That's fine for the diffusion equation in its simplest form:
+just take $\Delta x$ to be comparable to the scales you care
+about. But if you are doing a problem numerically, usually it won't be
+a pure diffusion problem, and then there are other features in the
+problem that need to be tracked at higher resolution. So we want a way
+to retain the spatial resolution but take longer time steps.
+
 We can take larger time steps if we are willing to sacrifice accuracy
 at small scales. One version of this to construct an {\it implicit}
 differencing method:
@@ -441,7 +452,7 @@ Here the right-hand side uses the future time step values!
 
 \begin{answer}
 This is still a linear system of equations. It has $N$ unknowns
-($q_j^{n+1}$, and you have $N$ knowns ($q_j^{n}$). So it can be solved
+($q_j^{n+1}$), and you have $N$ knowns ($q_j^{n}$). So it can be solved
 as a sparse matrix problem. 
 
 Specifically:
@@ -484,9 +495,10 @@ with the equilibrium solution.  That's not a crazy result, but it does
 mean that if there is structure on small scales in your initial
 conditions, this dissipates, and perhaps not accurately. 
 
-Another method which is the most commonly used technique, is the {\it
-Crank-Nicolson} method. This is formed by the average of the two above
-methods. This yields a second-order-in-time result:
+We can achieve higher accuracy by using a second-order-in-time
+technique.  This is the most commonly used technique, and is called
+the {\it Crank-Nicolson} method. It is simply the average of the two
+above methods. 
 \begin{equation}
 \frac{q_j^{n+1} - q_j^n}{\Delta t}
 = \frac{\alpha}{2}
@@ -495,5 +507,81 @@ methods. This yields a second-order-in-time result:
   \left(q_{j+1}^{n} - 2 q_j^{n} + q_{j-1}^{n}\right)
 \right]
 \end{equation}
-If you work this out, it is also unconditionally stable. 
+This is second order in time because each side is centered on $n+1/2$
+and therefore over the interval $n$ to $n+1$ the first order error
+terms integrate out. If you work it out, it is also unconditionally
+stable, with:
+\begin{equation}
+ \xi = \frac{1 - 2 \alpha \sin^2\left(\frac{k\Delta x}{2} \right)}{1 + 2 \alpha \sin^2\left(\frac{k\Delta x}{2} \right)}
+\end{equation}
+
+How do we deal with generalizations of the diffusion equation, e.g. if
+$D$ is a function of position, or is a function of $q$? In the first
+case, it is sometimes possible to define a change of variable $x(y)$
+such that:
+\begin{equation}
+ {\rm d}y = \frac{{\rm d}x}{D(x)}
+\end{equation}
+In this case:
+\begin{equation}
+\frac{1}{D(x)} \frac{\partial}{\partial x} = \frac{\partial}{\partial
+y}
+\end{equation}
+and then we just get:
+\begin{equation}
+\frac{\partial q}{\partial t} = \frac{1}{D(y)}\frac{\partial^2
+q}{\partial x^2}
+\end{equation}
+Note that in this (and most other nontrivial cases) the stability
+criterion is not the same across the whole grid. So:
+\begin{equation}
+\Delta t \le {\rm min} \left[\frac{(\Delta y)^2}{2 D(y)^{-1}}\right]
+\end{equation}
+where there is {\it not} a typo in the denominator! 
+
+This isn't always possible but in this and in other situations one can
+use a finite differencing with $D$ evaluated in the right places.
+The explicit form of the finite difference becomes, for example:
+\begin{equation}
+ \frac{q_j^{n+1} - q_j^n}{\Delta t}
+  = \frac{D_{j+1/2} \left(q_{j+1}^n - q_{j}^n\right) -
+  D_{j-1/2} \left(q_j^n - q_{j-1}^n\right)}{(\Delta x)^2}
+\end{equation}
+Again the stability criterion will be dependent on position and we
+have to pick the smallest time step (i.e. corresponding to highest
+$D$ in our domain). We can do the same thing for fully implicit or
+Crank-Nicolson methods. 
+
+Nonlinear cases (where $D$ is a function of $q$) are more
+difficult in general. Explicit methods can just evaluate $D$ at the
+current time step:
+\begin{equation}
+ D_{j+1/2} = \frac{1}{2}\left[D\left(q_{j+1}^n\right) +
+ D\left(q_j^n\right)\right].
+\end{equation}
+But then if we plug this into an implicit scheme:
+\begin{equation}
+ \frac{q_j^{n+1} - q_j^n}{\Delta t}
+  = \frac{D_{j+1/2}\left(\vec{q}^{n+1}\right) \left(q_{j+1}^{n+1} - q_{j}^{n+1}\right) -
+  D_{j-1/2}\left(\vec{q}^{n+1}\right) \left(q_j^{n+1} - q_{j-1}^{n+1}\right)}{(\Delta x)^2}
+\end{equation}
+this isn't a simple tridiagonal linear system any more.  The only way
+is if we can now change variables in the dependent variables to
+$z(q)$:
+\begin{equation}
+{\rm d}z = D(q) \,{\rm d}q, 
+\end{equation}
+which is nice because the RHS becomes:
+\begin{equation}
+\frac{\partial^2 z}{\partial x^2}
+\end{equation}
+which has a straightforward finite difference.  Great, but we are
+trying to evolve $q$. To do this we linearize:
+\begin{equation}
+ z_j^{n+1} = z_j^n + \left(q_j^{n+1} - q_j^{n}\right) D\left(q_j^n\right)
+\end{equation}
+Then plugging this into the spatial finite difference, we get an
+linear implicit scheme, where the nonlinear parts are basically
+calculated from step $n$.
+
 
