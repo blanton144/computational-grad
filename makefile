@@ -4,6 +4,7 @@ DOCDIR= docs
 
 vpath %.tex $(TEXDIR)
 
+
 ALL= \
 	$(PDFDIR)/syllabus.pdf \
 	$(PDFDIR)/example.pdf \
