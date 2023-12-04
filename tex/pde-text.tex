@@ -584,4 +584,125 @@ Then plugging this into the spatial finite difference, we get an
 linear implicit scheme, where the nonlinear parts are basically
 calculated from step $n$.
 
+\section{Schr\"odinger Equation}
 
+In ordinary differential equations, there was an argument that
+sometimes one would trade decreased accuracy in some respects, for
+increased accuracy in other respects, like for energy conservation or
+phase space conservation. There are similar trade-offs in partial
+differential equations.
+
+The Schr\"odinger equation is one example, where unitarity is
+important---if you are following an electron, the total probability of
+that electron existing {\it somewhere} really ought to stay near
+unity.  It turns out that Crank-Nicolson, in addition to its nice
+properties above, {\it also} guarantees unitarity.
+
+We'll strip out the mass and Planck's constant and just write:
+\begin{equation}
+ i \frac{\partial\phi}{\partial t} = - \frac{\partial^2 \phi}{\partial x^2}
++ V(x)\phi.
+\end{equation}
+
+The first-order explicit scheme for this method is unconditionally
+unstable. A first-order implicit scheme yields:
+\begin{equation}
+i \left[\frac{\phi_j^{n+1} - \phi_j^n}{\Delta t}\right]
+= - \left[\frac{\phi_{j+1}^{n+1} - 2 \phi_{j}^{n+1}
++ \phi_{j-1}^{n+1}}{\left(\Delta x\right)^2} \right] +
+V_j \phi_j^{n+1}
+\end{equation}
+This yields:
+\begin{equation}
+\left[
+\begin{matrix}
+\beta_0 & \alpha & 0 & 0 & 0 & \ldots\cr
+\alpha & \beta_1 & \alpha & 0 & 0 &\ldots\cr
+0 & \alpha & \beta_2 & \alpha & 0 & \ldots\cr
+\ldots & \ldots & \ldots & \ldots & \ldots & \ldots \cr
+\ldots & 0 & 0 & \alpha & \beta_{N-2} & \alpha \cr
+\ldots & 0 & 0 & 0 & \alpha & \beta_{N-1} \cr
+\end{matrix}
+\right] \cdot
+\left[
+\begin{matrix}
+\phi_0^{n+1} \cr
+\phi_1^{n+1} \cr
+\phi_2^{n+1} \cr
+\ldots \cr
+\phi_{N-2}^{n+1} \cr
+\phi_{N-1}^{n+1} \cr
+\end{matrix}\right]
+ =
+\left[
+\begin{matrix}
+\phi_0^{n} \cr
+\phi_1^{n} \cr
+\phi_2^{n} \cr
+\ldots \cr
+\phi_{N-2}^{n} \cr
+\phi_{N-1}^{n} \cr
+\end{matrix}\right]
+\end{equation}
+where:
+\begin{eqnarray}
+\alpha &=& - \frac{\Delta t}{(\Delta x)^2} i \cr
+\beta_j &=& \left[\frac{2 \Delta t}{(\Delta x)^2} + (\Delta t) V_j\right] i + 1
+\end{eqnarray}
+Then von Neumann yields:
+\begin{equation}
+i \left[\frac{\xi - 1}{\Delta t}\right] =
+\xi \left[ \frac{2 \cos k \Delta x - 2}{(\Delta x)^2} - V_j \right] 
+\end{equation}
+and rearranging and using the same trig tricks as above:
+\begin{equation}
+\xi = \frac{1}{1 + i \left[\frac{4 \Delta t}{(\Delta
+x)^2} \sin^2\left(\frac{k \Delta x}{2}\right)+ V_j \Delta t\right]}
+\end{equation}
+and this always is less than one because the modulus of the
+denominator is always greater than one.
+
+{\it But} this method is not unitary in the sense of maintaining
+\begin{equation}
+ \int_{-\infty}^{\infty} {\rm d}x \left|\phi(x)\right|^2 = 1
+\end{equation}
+This sort of issue was a
+nuisance for ODEs, which motivated symplectic methods, but in the case
+of Schr\"odinger it is extremely severe and makes the implicit methods
+useless, as I show in the notebooks.
+
+A unitary form of the same first order approximation can be obtained
+as follows. Another way to think about the solutions to this equation
+across $\Delta t$ is:
+\begin{equation}
+\vec{\phi}^{n+1} = \exp(- i H (\Delta t)) \vec{\phi}^n
+\end{equation}
+and the first-order-in-time explicit approximation of this is:
+\begin{equation}
+\vec{\phi}^{n+1} \approx (1 - i H (\Delta t)) \vec{\phi}^n
+\end{equation}
+and the first-order-in-time implicit approximation of this is:
+\begin{equation}
+\vec{\phi}^{n+1} \approx \left(1 + i H (\Delta t)\right)^{-1} \vec{\phi}^n
+\end{equation}
+where we evaluate $H$ discretely. The norm of $\phi$ will evolve as:
+\begin{equation}
+\left[\left(1 + i H (\Delta t)\right)^{-1}\right]^\dag
+\left(1 + i H (\Delta t)\right)^{-1}  =
+\left(1 - i H (\Delta t)\right)^{-1}
+\left(1 + i H (\Delta t)\right)^{-1}
+\end{equation}
+which for some eigenfunction with eigenvalue $E$ will go as $1-(\Delta
+t)^2 E^2$, and thus will cause a decrease as we saw. 
+
+But at the same order of approximation we can write:
+\begin{equation}
+\vec{\phi}^{n+1} = \exp(i H (\Delta t)) \vec{\phi}^n \approx
+(1 + i H (\Delta t) / 2)^{-1}
+(1 - i H (\Delta t) / 2)
+\vec{\phi}^n
+\end{equation}
+which can be thought of as moving forward half a step explicitly and
+the next half step implicity. As noted above, this is just
+Crank-Nicolson. This is unconditionally stable and the norm is
+constant, since its adjoint operator is its inverse.
