@@ -146,13 +146,18 @@ q_j^{n+1} = q_j^n + \frac{\Delta t}{\Delta x^2} \left(q_{j+1}^n - 2
 q_j^n +q_{j-1}^{n}\right) - \rho_j \Delta t
 \end{equation}
 We need to take $\Delta t / \Delta x^2 < 1/2$ for stability as we
-found before. This is called the {\it Jacobi method}. 
+found before. But let's take the largest possible. Then:
+\begin{equation}
+q_j^{n+1} = \frac{\Delta t}{\Delta x^2} \left(q_{j+1}^n
++q_{j-1}^{n}\right) - \rho_j \Delta t
+\end{equation}
+This is called the {\it Jacobi method}. 
 
 It turns out you can also just do this ``in-place,'' meaning that you
 can just use your current round of updates:
 \begin{equation}
-q_j^{n+1} = q_j^n + \frac{\Delta t}{\Delta x^2} \left(q_{j+1}^n - 2
-q_j^n +q_{j-1}^{n+1}\right) - \rho_j \Delta t
+q_j^{n+1} = \frac{\Delta t}{\Delta x^2} \left(q_{j+1}^n 
++q_{j-1}^{n+1}\right) - \rho_j \Delta t
 \end{equation}
 This method, called {\it Gauss-Seidel}, converges \ldots a little bit
 faster.
@@ -212,10 +217,19 @@ The inversion necessary to take each step is a simple one; as we will
 see, simple enough that it just looks like a simple update.
 
 It can be shown that the method is convergent for $0<\omega<2$, though
-typically you want $\omega>1$, which typically (though not always) it
+typically you want $\omega>1$, which typically (though not always) 
 will give faster convergence than Gauss-Seidel.
+
+It is also dead simple to code, since you just use the formula:
+\begin{equation}
+\label{eq:update}
+q_j^{\mathrm{new}} = q_j^{\mathrm{old}}
+- \frac{\xi_j^{\mathrm{curr}}}{c_j}
+\end{equation}
+where $\xi_j^{\mathrm{curr}}$ is the current residual and $c_j$, as we
+will see, is just the diagonal component of the elliptic operator.
  
-You can write the problem as:
+To see this, we can write the problem as:
 \begin{equation}
 a_j q_{j+1} + b_j q_{j-1} + c_j q_j = f_j
 \end{equation}
@@ -234,14 +248,9 @@ involves the following steps:
 \end{eqnarray}
 
 So let's imagine stepping through in $j$ and keeping track of the
-current residual $\xi_j^{\mathrm{curr}}$ based on progress so far, and using the
-formula:
-\begin{equation}
-\label{eq:update}
-q_j^{\mathrm{new}} = q_j^{\mathrm{old}}
-- \frac{\xi_j^{\mathrm{curr}}}{c_j}
-\end{equation}
-Then:
+current residual $\xi_j^{\mathrm{curr}}$ based on progress so far,
+
+Then using Equation \ref{eq:update}:
 \begin{equation}
 q_0^{\mathrm{new}} = q_0^{\mathrm{old}} - \frac{\xi_0}{c_0}
 \end{equation}
