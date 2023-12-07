@@ -81,10 +81,24 @@ Meaningless or not, however, we {\it have} to specify a prior if we
 want the posterior. We just can't say anything about the posterior
 otherwise.
 
-The last quantity is $P(\vec{d})$, which is the distribution of data
-sets we could get over {\it all} choices of $\vec{\theta}$ (when
-distributed as the prior). This is most definitely very hard to
-calculate but we rarely actually need it, as we will see.
+The last quantity is the model evidence $P(\vec{d})$, which is the
+distribution of data sets we could get over {\it all} choices of
+$\vec{\theta}$ (when distributed as the prior). It can be calculated
+as:
+\begin{equation}
+P(\vec{d}) = \int {\rm d}^N\vec{\theta} P(\vec{d}| \vec{\theta} )
+P(\vec{\theta})
+\end{equation}
+This is most definitely very hard to calculate. It is important in
+comparing different models $M_1$ and $M_2$, where the ratio of
+evidences is called the {\it Bayes factor} and is a measure of the
+odds of one model to another. It is closely related to the likelihood
+ratio in frequentist statistics. As in that case, although the
+evidence is a probability distribution, one can imagine integrals that
+would lead to ``goodness-of-fit'' or significance measures based on
+$P(\vec{d})$ (in the simplest frequentist case, this is usually
+expressed as ``under the model such-and-so fraction of experiments are
+expected to yield $\chi^2$ greater than observed'' (the $p$-value).
 
 A Bayesian analysis seeks the posterior distribution of $\vec{\theta}$
 given the obtained data $\vec{d}$, under the model $M$. If the
@@ -126,7 +140,12 @@ distribution---if you just need the {\it peak}, just optimize for the
 peak using BFGS or something like that! Also note that although we use
 the language of Bayesian inference in this section, you can also do
 pretty much exactly the same set of calculations and reinterpret it as
-a frequentist result (that is, characterizing the likelihood).
+a frequentist result (that is, characterizing the likelihood). In
+fact, as we will see MCMC really is just a method of generating any
+distribution with some desired distribution (i.e. it doesn't need to
+be a posterior probability) so this method can be used, for example,
+in Monte Carlo integration for importance sampling and similar
+applications.
 
 \section{MCMC Concept}
 
@@ -243,5 +262,104 @@ p(\vec{\theta}_{i} | \vec{\theta}_{i+1})
 \end{equation}
 i.e. the detailed balance Equation \ref{eq:detailed_balance}.
 
+\section{Why use MCMC?}
 
+One uses MCMC when you have a large enough number of parameters, when
+your model is nonlinear in its parameters, and when you need to
+understand the error distribution extremely well. For example, when
+constraining cosmological parameters, we have all of these
+conditions---a dozen parameters, a complex physical model interposed
+between the model parameters and the data, and a desire to know the
+uncertainties and their covariances. Please note that if your model
+happens to be linear, you don't need to need MCMC!
 
+The utility of the MCMC becomes clear when you think about measuring
+the error in the $\vec{\theta}$ values. The posterior distribution is
+often some complex shape in $N$-dimensions, and it is the probability
+density in all coordinates. Often we are interested in just one
+parameter, say $\theta_0$. To calculate its posterior we need this
+integral:
+\begin{equation}
+P(\theta_0 | \vec{d}) P(\theta_0) = \int {\rm
+d}^{N-1}\vec{\theta}_{N-1} P(\vec{\theta} | \vec{d}) P(\vec{\theta})
+\end{equation}
+which could be quite annoying. With MCMC results though, it is
+trivial: just look at your $\theta_0$ samples!
+
+In fact, you can do this for {\it any function of $\vec{\theta}$
+$f(\vec{\theta})$!!
+
+\section{Burn-in and the autocorrelation time}
+
+In the implementation of an MCMC, you have to start
+somewhere. Wherever you start will bias the distribution that you
+get. If you start far away from the peak of the distribution, the MCMC
+will wander towards the peak along some particular path, through areas
+of very low values of the probability distribution. The points along
+that path are highly overrepresented!  But even if you start near the
+peak of the distribution, for a while the points will be near (sort of
+``remembering'') the starting point, and this too is biased.
+
+Finally, this discussion makes it clear that the MCMC points are not
+independent, so (for example) if we want to know the error in our MCMC
+determination of the mean of the posterior along some quantity ({\it
+note this is not the error in the quantity!}).
+
+We need to be able to determine how many steps we need to take for the
+burn-in, and how many truly ``independent'' steps we have taken. The
+usual tool is the autocorrelation function and the autocorrelation
+time.
+
+\section{Proposal distribution tuning}
+
+An important issue to deal with in MCMC is the proposal
+distribution. In the simplest case of Metropolis-Hastings and an
+isotropic Gaussian distribution in the parameters, a number of issues
+can occur. The most obvious is that the steps (the width of the
+Gaussian) need to be about the right length. If you take very large
+steps, the acceptance probability will be extremely low and you can
+spend a long time waiting for your next step to be accepted. If you
+take very small steps, most of them will be accepted but this is
+because you are only very slowly updating. So you will only find the
+peaks of the distribution very slowly, and if you have a multimodal
+distribution your exploration will take so long it will be hard to
+traverse from peak to peak. The acceptance probability you want is of
+order 0.5, though as far as I know there is no hard-and-fast known
+criterion that is ``optimal'' in some sense.
+
+There is however another issue, which is that in the general case an
+isotropic proposal distribution is highly inefficient. If $\pi$ has a
+narrow ridge (aligned or not with the axes) the isotropic proposals
+will either be too big in the narrow dimension of the ridge, or too
+small in the long dimension of the ridge.
+
+There are various ways to deal with this situation. The most obvious
+idea is to have an adaptive covariance in the proposal distribution
+that tunes to the distribution as you go in order to get the right
+acceptance probability. However, if you just write down a version of
+that adaptive method that looks like it would work heuristically, it
+is highly unlikely to still satisfy the detailed balance
+equations---you are building in a dependence of $q$ on the
+distribution $\pi$.
+
+There are methods for doing this that depend on the amount of
+adaptation essentially vanishing over the long haul; the simplest
+algorithms use the current estimates of the covariances of the
+distribution to set the size and shape of the proposal distribution.
+
+Often practicioners will do something like this ``by hand.'' Two
+common approaches:
+\begin{itemize}
+\item Perform a set of burn-in experiments to tune the step sizes
+based on the acceptance probabilities, and then use a particular
+(fixed) choice for the full MCMC.
+\item Optimize the posterior and estimate the Hessian at the optimum,
+start near the optimum to reduce burn-in time (though you still need
+burn-in!), and use the Hessian to set the covariance of the Gaussian
+for the proposals.
+\end{itemize}
+
+In a small number of dimensions these issues are not so bad---but in
+the typical case of 10 dimensions they are pretty bad.
+
+\section{Affine Invariant MCMC}
