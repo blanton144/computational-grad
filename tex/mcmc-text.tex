@@ -287,7 +287,7 @@ which could be quite annoying. With MCMC results though, it is
 trivial: just look at your $\theta_0$ samples!
 
 In fact, you can do this for {\it any function of $\vec{\theta}$
-$f(\vec{\theta})$!!
+$f(\vec{\theta})$!!}
 
 \section{Burn-in and the autocorrelation time}
 
@@ -363,3 +363,106 @@ In a small number of dimensions these issues are not so bad---but in
 the typical case of 10 dimensions they are pretty bad.
 
 \section{Affine Invariant MCMC}
+
+However, there are methods where there are only one or two parameters
+that need to be tuned no matter what the number of dimensions. One
+class of methods is known as {\it affine invariant MCMC}, and is the
+basis of {\tt emcee}, written by one of your ancestors as PhD students
+at NYU, Daniel Foreman-Mackey.
+
+The idea here is to create a process whose steps which would be the
+same even if you transformed $\vec{\theta}$ under some general affine
+transformation. Mathematical details aside, an affine transformation
+is just this:
+\begin{equation}
+\vec{\theta}' = \mat{A}\cdot\vec{\theta} + \vec{b}
+\end{equation}
+i.e. a linear transformation plus a shift. This can scale, shear,
+rotate, whatever.
+
+Specifically we want it to be the case that our procedure for choosing
+the next step commmutes with any affine transformation of
+coordinates. If we start one step $n$ by transforming $\vec{\theta}_n$
+to ${\vec{\theta}_{n}}'$, and then take the step to
+${\vec{\theta}_{n+1}}'$, that should be the same as taking the step to
+$\vec{\theta}_{n+1}$ and performing the same affine transformation.
+If this is true then it cannot possibly matter what the (local) shape
+of the posterior distribution is, since the affine transformation can
+always distort it to something isotropic.
+
+Note that clearly our isotropic Gaussian does not satify this
+condition! Under the affine transformation that distribution will
+clearly be distorted.
+
+It might seem hard to guarantee this property! Indeed with a single
+``walker'' I have a hard time conceiving of doing so. And somehow you
+{\it also} have to make sure that the steps obey the ergodic
+properties necessary.
+
+The procedure, due to Goodman \& Weare (2010), is to use $K$
+walkers. The proposed step for each walker is based on the location of
+the other $K-1$ walkers. Specifically, if we are considering a walker
+$k$, we draw another walker at random $j$.
+\begin{equation}
+ \vec{\theta}_{i+1}^{(k)} = \vec{\theta}_{i}^{(j)} +
+ Z \left[\vec{\theta}_{i}^{(k)} - \vec{\theta}_{i}^{(j)}\right]
+\end{equation}
+with a random variable $Z$, where we will see in a second that $Z$
+will range between $\sim 0.7$--$1.4$. That is, we just move walker $k$
+a little closer or further away from walker $j$.
+
+This proposal is clearly affine-invariant---if I linearly map
+everything, it doesn't matter if I do it before or after the
+proposal. Also, you can see that {\it if} the walkers have the
+property that they are exploring the posterior in a reasonable way,
+the proposal steps will be along the locally covariant directions of
+the posterior. This means that the acceptance criterion will be much
+more efficient.
+
+If we choose $Z$ from a distribution $g(z)$ such that $g(z^{-1}) =
+zg(z)$ then the proposal distribution is symmetric between $i$ and
+$i+1$. We can see this with the slight rearrangement:
+\begin{eqnarray}
+ \vec{\theta}_{i+1}^{(k)} &=& \vec{\theta}_{i}^{(j)} +
+ Z \left[\vec{\theta}_{i}^{(k)} - \vec{\theta}_{i}^{(j)}\right] \cr
+ \left[\vec{\theta}_{i+1}^{(k)}
+ - \vec{\theta}_i^{j}\right] &=& Z \left[\vec{\theta}_{i}^{(k)} - \vec{\theta}_{i}^{(j)}\right] 
+\end{eqnarray}
+So if $Z$ is distributed as $g(z)$ then:
+\begin{equation}
+ q(\vec{\theta}_k^{i+1}| \vec{\theta}_k^{i}) = \frac{1}{\Delta_i}
+ g(z)
+\end{equation}
+where $\Delta_i$ is the distance between $j$ and $k$ at step $i$. To
+be symmetric we must have:
+\begin{equation}
+ q(\vec{\theta}_k^{i}| \vec{\theta}_k^{i+1}) = \frac{1}{\Delta_{i+1}}
+ g(z^{-1}) = \frac{1}{\Delta_i} z^{-1} g(z^{-1})
+\end{equation}
+Somewhat less easy to show is that the acceptance criterion turns
+into:
+\begin{equation}
+\alpha = {\rm min}\left(1,
+Z^{N-1} \frac{\pi(\vec{\theta}_{i+1})}{\pi(\vec{\theta}_i)} \right)
+\end{equation}
+This relies on a deeper understanding of the partial resampling
+technique, of which this is an example, which works if the {\it
+conditional distribution} along the line is preserved. The conditional
+distribution is proportional to $Z^{N-1}$ (like the density on a
+circle goes as $1/R$, and the density on a sphere like $1/R^2$);
+remember the line originates at point $j$ so there are not worries
+about the divergence at zero.
+The key point is that this procedure yields detailed balance.
+
+It is very important that the steps not be taken {\it all} in
+parallel. That, it turns out, destroys the detailed balance. But you
+can take {\it half} of the walkers, and make steps based on the
+locations of the other half (chosen at random, with replacement), and
+then do the opposite. This allows the walkers to be updated with
+parallelization.
+
+The usual choice is:
+\begin{equation}
+g(z) \propto \frac{1}{\sqrt{z}}
+\end{equation}
+for $1/a < z < a$, with $a\sim 2$, and zero otherwise.

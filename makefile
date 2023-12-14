@@ -31,6 +31,8 @@ ALL= \
 	$(PDFDIR)/linear-algebra-answers.pdf \
 	$(PDFDIR)/differentiation.pdf \
 	$(PDFDIR)/differentiation-answers.pdf \
+	$(PDFDIR)/gp.pdf \
+	$(PDFDIR)/gp-answers.pdf \
 	$(PDFDIR)/random.pdf \
 	$(PDFDIR)/random-answers.pdf \
 	$(PDFDIR)/arrays.pdf \
