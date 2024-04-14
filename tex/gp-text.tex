@@ -1,0 +1,196 @@
+These notes draw heavily on Rasmussen \& Williams, the classic text on
+Gaussian Processes.
+
+\section{What is a Gaussian Process?}
+
+A Gaussian Process is ``a collection of random variables, any finite
+number of which have a joint Gaussian distribution.'' That is, it is a
+just a Gaussian random distribution, though it is of potentially
+infinite dimension. Do not be overly distracted by the ``process'' in
+the name.
+
+Typically, we use a set of continuous independent variables $\vec{x}$,
+sometimes called ``input variables.'' The examples I go through will
+be all one dimensional so I will just refer to $x$, but increasing the
+dimensionality of the independent variable space doesn't matter much.
+
+The Gaussian Process outputs will be referred to as $f(x)$, and the
+distribution of $f(x)$ is fully defined by the mean and covariance:
+\begin{eqnarray}
+ m(x) &=& \left\langle f(x) \right\rangle \cr
+ k(x, x') &=& \left\langle (f(x) - m(x)) (f(x') - m(x'))\right\rangle \cr
+\end{eqnarray}
+where you will hear $k()$ also referred to as the ``kernel.'' So $k(x,
+x)$ is just the variance of the output $f(x)$, and for $x\ne x'$ the
+kernel $k(x, x')$ is an off-diagonal covariance.
+
+Why would we define such a thing as a Gaussian Process? A good example
+is the case of an irregularly sampled function at points $x$, with
+potentially large gaps---say elevation measurements across the surface
+of the Earth (which would have been a familiar data set to Gauss
+himself). We want to have some estimate of the elevation in between
+the measurements, at other points $x^\ast$, and we want those
+estimates to obey some expectations we have about relative
+smoothness. Another way of expressing smoothness is to say that the
+variations from point to point are correlated, or covariant. Points
+close together are well correlated, and points further away are less
+correlated.
+
+This line of reasoning would motivate making predictions about the new
+points $x^\ast$ using a Gaussian Process. Typically we set the kernel,
+and then use measured $f(x)$ to make predictions for
+$m(x^\ast)$. Along with the predictions $m(x^\ast)$ we also have
+predictions for their variance and covariance. If the kernel is
+``good,'' these variances are extraordinarily useful---they give you
+some idea of how certain to be of the values you would measure at
+points $x^\ast$, and for a surveyor might allow them to find useful
+places to take new measurements.
+
+A common example of a kernel is the so-called ``squared exponential'':
+\begin{equation}
+k(x, x') = \exp\left(\frac{1}{2}\left|x-x'\right|^2\right)
+\end{equation}
+which is definitely not a squared exponential, but that is what is
+called. Since the Gaussian Process people definitely know what a
+Gaussian looks like, I assume they have their own reasons for this
+nomenclature, possibly to avoid confusing what they call the kernel
+(which need not be Gaussian) with the very necessary Gaussian
+distribution of $f(x)$.
+
+\section{A two point example}
+
+Let us imagine that we have two distinct values of an independent
+variable, $x_1$ and $x_2$, and we are interested in a function $f(x)$
+at those points. Let's say we know $f(x_1)$, what can we
+say about $x_2$?
+
+A Gaussian Process approach to this question is to assume that
+$f(x_1)$ and $f(x_2)$ are drawn from a joint Gaussian distribution
+with zero mean and with some covariance matrix:
+\begin{equation}
+\mat{C} = \left(\begin{matrix}
+k_{11} & k_{12} \cr
+k_{12} & k_{22} 
+\end{matrix}\right)
+\end{equation}
+and in fact these elements are determined by a kernel function $k(x,
+x')$, like the squared exponential, so the closer together the $x$
+values, the more correlated the variables.
+
+If this is the case, our question becomes, ``what is the distribution
+of $f(x_2)$ conditional on $f(x_1)$?'' For any multivariate Gaussian,
+a conditional distribution on one dimension is also
+Gaussian. Specifically, it will be defined by its ``predictive mean''
+and ``predictive variance'':
+\begin{eqnarray}
+ \left\langle f(x_2)\right\rangle &=& \frac{k_{12}}{k_{11}} f(x_1)
+ = \sqrt{\frac{k_{22}}{k_{11}}}r f(x_1) \cr
+\sigma_{f2}^2 = 
+ \left\langle \left[f(x_2) - \left\langle
+ f(x_2)\right\rangle\right]^2\right\rangle
+ &=& {k_{22}} - \frac{k_{12}^2}{k_{11}} = k_{22} \left(1 - r^2\right)
+\end{eqnarray}
+where in the last equality, which is shown just because it might be
+familiar, $r$ is the correlation coefficient $k_{12}
+/ \sqrt{k_{11}k_{22}}$.
+
+So what is the behavior of this? At some given distance $x_1-x_2$, the
+expected mean value of $f(x_2)$ is some fraction of $f(x_1)$. The
+closer the points, the closer the ratio is to unity, and so the closer
+the values. As the points get very far apart, the expectation for
+$f(x_2)$ reverts to the mean of zero. Meanwhile, the expected variance
+of the points starts out relatively small at close distances, but
+grows up to the auto-covariance at large distances. If you ask, as $r$
+differs from unity, how does the mean and standard deviation of
+$f(x_2)$ change, you find that the standard deviation changes rapidly
+and the mean more slowly, so that the standard deviation always
+exceeds it---i.e. although the expectation value of $f(x_2)$ drifts
+towards zero, the associated uncertainties always are consistent with
+$f(x_2)=f(x_1)$.
+
+\section{Gaussian Process Prediction}
+
+The usual case is that we have measurements of $f(x)$ at a few points
+$\vec{x}$ and we want to make predictions at some other points
+$\vec{x}^\ast$. This is just the same as the two point case, but we 
+condition on all the $\vec{x}$, and look at the resulting (still
+Gaussian!) mean and variance of $\vec{x}^{\ast}$.
+
+There are some important identities of multivariate Gaussians that
+make this simple. We will use the math-y notation that ``$\sim$''
+means ``is distributed as'' and $\mathcal{N}(\vec{\mu}, \mat{C})$
+indicates a Gaussian distribution with mean $\vec{\mu}$ and covariance
+matrix $\mat{C}$. The full Gaussian distribution of all the values at
+$x$s of interest is:
+\begin{equation}
+\left[\begin{matrix}
+ f(\vec{x}) \cr
+ f(\vec{x}^\ast)
+ \end{matrix}\right]
+ \sim \mathcal{N}\left( \vec{0},
+\left[\begin{matrix}
+ \mat{K}(\vec{x}, \vec{x}) & \mat{K}(\vec{x}, \vec{x}^\ast) \cr
+ \mat{K}(\vec{x}^\ast, \vec{x}) & \mat{K}(\vec{x}^\ast, \vec{x}^\ast)
+ \end{matrix}\right] \right)
+\end{equation}
+where the vector and matrix are written in block form, and
+$\mat{K}(\vec{x}, \vec{x})$ just is a block with $k(x_i, x_j)$ as each
+element $K_{ij}$ and similar in the other blocks.
+
+It turns out that if I condition this matrix on $f(\vec{x})$, I can
+write:
+\begin{equation}
+f(\vec{x}^\ast) | f(\vec{x}) \sim 
+\mathcal{N}
+\left(\mat{K}(\vec{x}^\ast, \vec{x}) \cdot \mat{K}(\vec{x}, \vec{x})^{-1}
+\cdot f(\vec{x}), 
+\mat{K}(\vec{x}^\ast, \vec{x}^\ast)
+- \mat{K}(\vec{x}^\ast, \vec{x})\cdot 
+\mat{K}(\vec{x}, \vec{x})^{-1}
+\cdot \mat{K}(\vec{x}, \vec{x}^\ast) \right)
+\end{equation}
+If you look carefully, this is the same equation we used before for
+the two point case, now in matrix form.
+
+In implementation, instead of the inverse of $K(\vec{x}, \vec{x})$,
+often its Cholesky decomposition is used:
+\begin{equation}
+ \mat{L}\cdot\mat{L}^T = \mat{K}
+\end{equation}
+Then this calculation:
+\begin{equation}
+ \mat{K}^{-1} \cdot f(\vec{x}) = \vec{q}
+\end{equation}
+can be rewritten as:
+\begin{eqnarray}
+ \mat{K} \cdot f(\vec{x}) &=& \vec{q} \cr
+ \mat{L} \cdot \left(\mat{L}^T \cdot \vec{q}\right) &=&
+ f(\vec{x})
+\end{eqnarray}
+So if you solve the equation:
+\begin{equation}
+ \mat{L} \cdot \vec{r} = f(\vec{x})
+\end{equation}
+and then 
+\begin{equation}
+ \mat{L}^T \cdot \vec{q} = f(\vec{x})
+\end{equation}
+You then can write the predictive mean as:
+\begin{equation}
+\mat{K}(\vec{x}^\ast, \vec{x}) \cdot \vec{q}.
+\end{equation}
+Similarly the predictive variance can be written using:
+\begin{eqnarray}
+ \mat{V} &=& \mat{L}^{-1} \cdot \mat{K}(\vec{x}, \vec{x}^\ast) \cr
+ \mat{L} \cdot \mat{V} &=& 
+\mat{K}(\vec{x}, \vec{x}^\ast)
+\end{eqnarray}
+and then:
+\begin{equation}
+ \mat{K}(\vec{x}^{\ast}, \vec{x}^{\ast}) - \mat{V}^T\cdot \mat{V}
+\end{equation}
+This procedure is generally more stable.
+
+The very most stable thing to do is to solve these systems using the
+pseudo-inverse (i.e. use the SVD decomposition of $\mat{L}$, which can
+be achieved with {\tt numpy.linalg.lstsq}.
