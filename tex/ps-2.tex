@@ -5,7 +5,7 @@
 \begin{document}
 
 \title{\bf Computational Physics / PHYS-GA 2000 / Problem Set \#2
-\\ Due September 19, 2023 }
+\\ Due September 17, 2024 }
 
 You {\it must} label all axes of any plots, including giving the {\it
   units}!!
@@ -14,8 +14,18 @@ You {\it must} label all axes of any plots, including giving the {\it
 
   \item Figure out how NumPy's 32-bit floating point representation
     (which is the IEEE standard) represents the number $100.98763$ in
-    bits. By how much does the actual number differ from its 32-bit
-    floating point representation?
+    bits. This 32-bit representation in fact corresponds to a slightly
+    different number. Calculate what that 32-bit number is and how
+    much the actual number differs from its 32-bit floating point
+    representation
+
+  \item Demonstrate using examples that 32-bit is less precise and
+    smaller dynamic range than 64-bit. First, find approximately the
+    smallest value that you can add to 1, and get an answer that is
+    different than 1, in both 32-bit ({\tt np.float32}) and 64-bit
+    ({\tt np.float64}) precision. Second, approximately find the
+    minimum and maximum (positive) numbers that these two types can
+    represent without an underflow or overflow.
 
   \item Exercise 2.9 of Newman. Note that the physical constants drop
     out so you do not need to worry about them (whenever possible you
@@ -29,11 +39,12 @@ You {\it must} label all axes of any plots, including giving the {\it
     will be much faster than using a {\tt for} loop over $c$.
 
   \item Exercise 4.2 of Newman. For Part (c), put your solver into a
-    {\it module} that can be imported. Call the module {\tt
-      quadratic}, and your function within it {\tt quadratic}. Create
-    a file called {\tt test\_quadratic.py} with the contents shown
-    below, and ensure that the call {\tt pytest test\_quadratic.py}
-    returns no errors. This is a simple example of a unit test.
+    {\it module} that can be imported. Name the module {\tt
+      quadratic}, and name your function within it {\tt
+      quadratic}. Create a file called {\tt test\_quadratic.py} with
+    the contents shown below, and ensure that the call {\tt pytest
+      test\_quadratic.py} returns no errors. This is a simple example
+    of a unit test.
 \begin{verbatim}
 import pytest
 

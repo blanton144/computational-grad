@@ -345,3 +345,73 @@ array, I get back much better answers in both single- and
 double-precision. The summation in this case is done in a more stable
 manner apparently!
 \end{answer}
+
+\noindent {\bf Why shouldn't I just always use the highest precision
+version of a number that I can?}
+  
+\begin{answer}
+Whether to use 32-bit or 64-bit precision can be a subtle question. In
+many simple applications, it does not matter and you can use
+either. However, if you have strict precision requirements and/or
+limited resources for your calculation it starts to matter.
+
+Some calculations suffer from numerical instability. We'll get to
+various examples later, but a common one is inverting a matrix that is
+too close to being degenerate, which is more common than you might
+think. In these cases, you'll want to use 64-bit precision. But why
+not just always use the highest possible precision?
+
+The first reason is that higher precision numbers take more memory. If
+you need to keep lots of information in memory, the higher precision
+will mean you can keep fewer numbers. For example, you may have a grid
+of numbers describing, say, a density field; if you are
+memory-limited, your grid will be lower resolution if you use higher
+precision numbers.
+
+The second reason is that higher precision numbers take longer to
+operate on---in a multiplication, there is more for the computer if
+there are more bits. If you are CPU-time limited, using higher
+precision will mean you can take fewer time steps or have to use
+larger time steps.
+
+Sometimes, the approximation errors due to finite time steps and grid
+spacing are larger than the 32-bit numerical precision errors. Thus,
+using higher precision numbers can lead to {\it
+lower} precision answers because of sacrifices you make in resolution
+or number of time steps. At other times, numerical errors do matter
+more. 
+\end{answer}
+
+\noindent {\bf Can you think of a way to multiply two numbers?}
+
+The way that computers multiply numbers is more complicated than
+addition obviously. There is a simple way to multiply integers, which
+is basically long multiplication: you multiply each bit of the first
+number by the bits of the second number; each multiplication produces
+a shifted version of the second number; then you add them. But this is
+fairly inefficient. There are improvements in this method that modern
+CPU implement in hardware that prevent performing so many additions by
+first storing all of the results from the pairwise bit
+multiplications, and then recombining them cleverly, leading to a
+scaling of $\log N_b$ in the number of bits $N_b$.
+
+Multiplication of floating points is more complicated of course
+because you need to add the exposures, worry about overflow etc.
+
+\noindent {\bf What about dividing?}
+
+Floating point (or integer) division is tricky numerically for the
+same reasons it is tricky by hand. When computers see $a/b$, the usual
+approach is to calculate $a\times(1/b)$, reducing the problem to
+calculating $1/b$. 
+
+To calculate $1/b$, the approach uses a root-finding approach called
+Newton-Raphson that we will learn about later, and which it turns out
+has a very simple form for this case. 
+
+I hope I have impressed on you some of the complexity of even the
+simplest calculations you have to do---entire courses are taught on
+(and careers built on) the implementation of just what I cover
+here. For this course, we will blithely move on, and take for granted
+all of the hard work that computer scientists have done for physicists
+and others.

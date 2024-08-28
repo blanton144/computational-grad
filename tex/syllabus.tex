@@ -27,12 +27,10 @@
 % Special topics
 % - Interpolation
 % - Profiling code
-% - MCMC
-% - Gaussian processes
 
 \noindent This course teaches computational physics for physics PhD
 students. Classes meet Tuesday and Thursday 9:30am to 10:45am, in Room
-1045 of 726 Broadway.
+208 of 194 Mercer.
 
 \noindent The textbook is {\it Computational Physics}, by Mark
 Newman. I will draw material also from {\it Computational Physics}, by
@@ -59,8 +57,8 @@ email is {\tt blanton@nyu.edu}. You can come to ask questions about
 computational physics (or any other subject!) on Tuesdays 11:00am to
 12:15pm, or by appointment.
 
-\noindent The teaching assistant is Mia Morrell ({\tt
-  mcm8850@nyu.edu}) Recitation is Friday, 11am--12:15pm, in Room 1045
+\noindent The teaching assistant is Valentino Foit ({\tt
+  foit@nyu.edu}) Recitation is Friday, 11am--12:15pm, in Room 1045
 of 726 Broadway. This time will primarily consist of working on
 homework assignments.
 
@@ -88,12 +86,20 @@ which the TA and professor will be able to run to produce the data and
 plots. You will receive rather specific templates and instructions
 about code standards to follow!
 
+\noindent It is common now for many people to make use of generative
+AI tools (e.g. Co-Pilot) for programming or other tasks. {\it If you
+  do so in the homeworks or the project, I require you to document
+  doing so, providing the prompt and the raw output.} More generally,
+just remember that these tools are only useful if you can determine
+that they are working correctly, so using them doesn't save you from
+checking the results. I do not think there is any reliable evidence
+right now that they save significant time.
+
 \noindent Grades are based on problem sets (65\%), the large project
 and presentation (25\%), and class participation (10\%).
 
 \noindent The classes will proceed as follows (subject to
-revision!). The special topics at the end will consist of examples
-from throughout physics and are currently TBD.
+revision!). 
 
 \baselineskip 0pt
 \begin{table}[h!]
@@ -102,38 +108,38 @@ from throughout physics and are currently TBD.
 \hline
 {\it Date} & {\it Topic} & {\it Reading} & {\it Problem Sets} \cr  
 \hline 
-2023-09-05 (T) & Numbers on computers  & Ch.~1, 2, 3 & \cr
-2023-09-07 (R) & Arrays             & PDSH, Ch. 1 \& 2 & \cr
-2023-09-12 (T) & Numerics           & Ch.~4 & PS\#1 \cr
-2023-09-14 (R) & Random Numbers     & Ch.~10.1--10.2 & \cr
-2023-09-19 (T) & Integration        & Ch.~5.1--5.4 & PS\#2 \cr
-2023-09-21 (R) & Integration        & Ch.~5.5--5.9 & Teams Determined \cr
-2023-09-26 (T) &
-Differentiation    & Ch.~5.10--5.11 & PS\#3\cr
-2023-09-28 (R) & --- & & \cr
-2023-10-03 (T) & Linear Algebra     & Ch.~6.1 & PS\#4\cr
-2023-10-05 (R) & Linear Algebra     & Ch.~6.1 & \cr
-2023-10-10 (T) & 
-{\bf Legislative Day, no class}       & & \cr
-2023-10-12 (R) & Eigensystems       & Ch.~6.2 & \cr
-2023-10-17 (T) & Eigensystems       & Ch.~6.2 & PS\#5 \cr
-2023-10-19 (R) & Root-finding       & Ch.~6.3 & \cr
-2023-10-24 (T) & Minimization       & Ch.~6.4 & Project draft \#1 due\cr
-2023-10-26 (R) & Minimization       & Ch.~6.4 & \cr
-2023-10-31 (T) & Minimization       & Ch.~6.4 & PS\#6 \cr
-2023-11-02 (R) & Fourier Analysis     & Ch.~7 & \cr
-2023-11-07 (T) & Ordinary DEs       & Ch.~8.1--8.3 & \cr
-2023-11-09 (R) & Ordinary DEs       & Ch.~8.4--8.5 & PS\#7 \cr
-2023-11-14 (T) & Ordinary DEs       & Ch.~8.6 & \cr
-2023-11-16 (R) & Partial DEs       & Ch.~9.1 & \cr
-2023-11-21 (T) & Partial DEs        & Ch.~9.2 & Project draft \#2 due\cr
-2023-11-23 (R) & {\bf Thanksgiving, no class} & & \cr
-2023-11-28 (T) & Partial DEs        & Ch.~9.3 & PS\#8 \cr
-2023-11-30 (R) & Partial DEs        & Ch.~9.3 & \cr
-2023-12-05 (T) & Markov-Chain Monte Carlo & --- & PS\#9 \cr
-2023-12-07 (R) & Special topics     & --- & \cr
-2023-12-12 (T) & Special topics     & --- & \cr
-2023-12-14 (R) & Special topics     & --- & Final project due\cr
+2024-09-03 (T) & Numbers on computers  & Ch.~1, 2, 3 & \cr
+2024-09-05 (R) & Arrays \& Numerics  & PDSH, Ch. 4 \cr
+2024-09-10 (T) & Random Numbers     & Ch.~10.1--10.2 & {\bf PS\#1} \cr
+2024-09-12 (R) & Interpolation      & Ch.~5.1--5.2 & \cr
+2024-09-17 (T) & Integration        & Ch.~5.3--5.4 & {\bf PS\#2} \cr
+2024-09-19 (R) & Integration        & Ch.~5.5--5.9 & Teams Determined \cr
+2024-09-24 (T) & Differentiation    & Ch.~5.10--5.11 & {\bf PS\#3}\cr
+2024-09-26 (R) & Differantiation    & & \cr
+2024-10-01 (T) & Linear Algebra     & Ch.~6.1 & {\bf PS\#4}\cr
+2024-10-03 (R) & Linear Algebra     & Ch.~6.1 & \cr
+2024-10-08 (T) & {\bf Legislative Day, no class} & & {\bf PS\#5} \cr
+2024-10-10 (R) & Eigensystems       & Ch.~6.2 & \cr
+2024-10-15 (T) & Eigensystems       & Ch.~6.2 & {\bf PS\#6} \cr
+2024-10-17 (R) & Root-finding       & Ch.~6.3 & \cr
+2024-10-22 (T) & Minimization       & Ch.~6.4 & {\bf Project draft \#1
+  due}\cr
+2024-10-24 (R) & Minimization       & Ch.~6.4 & \cr
+2024-10-29 (T) & Minimization       & Ch.~6.4 & {\bf PS\#7} \cr
+2024-10-31 (R) & Fourier Analysis     & Ch.~7 & \cr
+2024-11-05 (T) & Ordinary DEs       & Ch.~8.1--8.3 & \cr
+2024-11-07 (R) & Ordinary DEs       & Ch.~8.4--8.5 & {\bf PS\#8} \cr
+2024-11-12 (T) & Ordinary DEs       & Ch.~8.6 & \cr
+2024-11-14 (R) & Partial DEs       & Ch.~9.1 & \cr
+2024-11-19 (T) & Partial DEs        & Ch.~9.2 & {\bf Project draft \#2
+  due}\cr
+2024-11-21 (R) & {\bf Thanksgiving, no class} & & \cr
+2024-11-26 (T) & Partial DEs        & Ch.~9.3 & {\bf PS\#8} \cr
+2024-11-28 (R) & Partial DEs        & Ch.~9.3 & \cr
+2024-12-03 (T) & Markov Chain Monte Carlo & --- & {\bf PS\#9} \cr
+2024-12-05 (R) & Gaussian Processes & --- & \cr
+2024-12-10 (T) & Gaussian Processes & --- & \cr
+2024-12-12 (R) & Using GPUs         & --- & Final project due\cr
 {\it Exam week} & Project presentations & --- & \cr
 \hline
 \end{tabular}
