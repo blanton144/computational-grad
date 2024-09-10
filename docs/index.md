@@ -25,6 +25,7 @@ Lecture notes and associated information:
 Problem sets: 
 
 | [PS 1](pdf/ps-1.pdf) | 
+| [PS 1](pdf/ps-2.pdf) | 
 
 There are [general instructions](pdf/projects-general.pdf) for the
 class project. The individual projects are below:

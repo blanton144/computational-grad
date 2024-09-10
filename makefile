@@ -25,6 +25,8 @@ ALL= \
 	$(PDFDIR)/boundary-answers.pdf \
 	$(PDFDIR)/integration.pdf \
 	$(PDFDIR)/integration-answers.pdf \
+	$(PDFDIR)/interpolation.pdf \
+	$(PDFDIR)/interpolation-answers.pdf \
 	$(PDFDIR)/eigensystems.pdf \
 	$(PDFDIR)/eigensystems-answers.pdf \
 	$(PDFDIR)/linear-algebra.pdf \
