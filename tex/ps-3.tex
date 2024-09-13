@@ -5,14 +5,12 @@
 \begin{document}
 
 \title{\bf Computational Physics / PHYS-GA 2000 / Problem Set \#3
-\\ Due September 26, 2023}
+\\ Due September 24, 2024}
 
 You {\it must} label all axes of all plots, including giving the {\it
   units}!!
 
 \begin{enumerate}
-  \item Exercise 4.3 of Newman.
-
   \item Read Example 4.3 in Newman. Using successively larger matrices
     (10$\times$10, 30$\times$30, etc.) find empirically and plot how
     the matrix multiplication computation rises with matrix size. Does
@@ -21,10 +19,20 @@ You {\it must} label all axes of all plots, including giving the {\it
     do they differ?
 
   \item Exercise 10.2 in Newman.
+
   \item Exercise 10.4 in Newman.
 
-  \item {\bf Central limit theorem example}
-    \item {\bf Tests of randomness of numpy}
+  \item Demonstrate that the central limit theorem works. Do so by
+    generating random variate $y=N^{-1} \sum_{i=0}^N x_i$, where $x_i$
+    is a random variate distributed as $\exp(-x)$ (you can use the
+    {\tt np.random} library to generate the exponentially-distributed
+    variates). First, calculate analytically how you expect the mean
+    (that one should be easy) and variance of $y$ to vary with
+    $N$. Show visually that for large $N$ the distribution of $y$
+    tends towards Gaussian. Show as a function of $N$ how the mean,
+    variance, skewness, and kurtosis of the distribution
+    change. Estimate at which $N$ the skewness and kurtosis have
+    reached about 1\% of their value for $N=1$.
 
 \end{enumerate}
 
