@@ -228,27 +228,34 @@ this scaling works.
 There's another way to think about Simpson's rule, which will be a
 useful way to think about dealing with approximation errors in ODEs
 too, when we get there. Let's take the trapezoidal rule. We know it
-yields an approximation $\hat I_1$ that differs from the real integral
+yields an approximation $\hat I_0$ that differs from the real integral
 $I$ as follows:
 \begin{equation}
-\hat I_1 = I + \epsilon \Delta x^2 + \mathcal{O}\left(\Delta x^4\right)
+\hat I_0 = I + \epsilon \Delta x^2 + \mathcal{O}\left(\Delta x^4\right)
 \end{equation}
 We don't know $\epsilon$, but it does not depend on $\Delta x$ at
 leading order. Let us take a second estimate of $I$ with half the step
 size, i.e. $\Delta x /2$, which would satisfy: 
 \begin{equation}
-\hat I_2 = I + \frac{1}{4} \epsilon \Delta x^2 + \mathcal{O}\left(\Delta x^4\right)
+\hat I_1 = I + \frac{1}{4} \epsilon \Delta x^2 + \mathcal{O}\left(\Delta x^4\right)
 \end{equation}
 Having done this we can combine these results and cancel the leading error
 term:
 \begin{equation}
-\hat I = \frac{4}{3} I_2 - \frac{1}{3} I_1 = I + \mathcal{O}\left(\Delta x^4\right)
+\hat I = \frac{4}{3} I_1 - \frac{1}{3} I_0 = I + \mathcal{O}\left(\Delta x^4\right)
 \end{equation}
 
 In terms of the denser sampling points, the weights are:
 \begin{eqnarray}
 w_1 &=& \left\{\frac{1}{2}, 0, 1, 0, \ldots, 0, 1,
 0, \frac{1}{2}\right\} \times \Delta x\cr
+w_2 &=& \left\{\frac{1}{2}, 1, 1, 1, \ldots, 1, 1,
+1, \frac{1}{2}\right\} \times \frac{\Delta x}{2}
+\end{eqnarray}
+or:
+\begin{eqnarray}
+w_1 &=& \left\{1, 0, 2, 0, \ldots, 0, 2,
+0, 1\right\} \times \frac{\Delta x}{2}\cr
 w_2 &=& \left\{\frac{1}{2}, 1, 1, 1, \ldots, 1, 1,
 1, \frac{1}{2}\right\} \times \frac{\Delta x}{2}
 \end{eqnarray}
@@ -262,7 +269,7 @@ That is, this combination {\it is} just Simpson's rule.
 Note that this also gives a way to assess the errors, because you can
 estimate:
 \begin{equation}
-\epsilon \Delta x^2 = \frac{4}{3}  \left(\hat I_2 - \hat I_1\right)
+\epsilon \Delta x^2 = \frac{4}{3}  \left(\hat I_1 - \hat I_0\right)
 \end{equation}
 This is a simple example of checking the convergence of the
 calculation. Also, in the case that you actually can call the function
@@ -272,8 +279,169 @@ precision.
 
 \section{Romberg Integration}
 
-Simpson's method can be extended, through something called Richardson
-extrapolation. The idea is 
+Simpson's method can be extended, through a version of something
+called Richardson extrapolation, which in this context takes the name
+of Romberg integration. In general, Richardson extrapolation means
+that you perform a calculation with smaller and smaller steps (or
+whatever sets your approximation error) and then use that series to
+extrapolate to zero step size.  I find most explanations of this
+method horribly confusing and actually somewhat vague. I'll try to do
+better here.
+
+The idea is that if you use the trapezoid method with step size
+$\Delta x$, it has an error series like so:
+\begin{eqnarray}
+\hat I &=& I + \epsilon_0 \left(\Delta x\right)^2 + 
+\epsilon_1 \left(\Delta x\right)^4 + 
+\epsilon_2 \left(\Delta x\right)^6 + \ldots \cr
+&=& \sum_{j=0}^{\infty} \epsilon_j \left(\Delta x\right)^{2j+1}
+\end{eqnarray}
+Now let's say that we have a series of $N$ trapezoid method
+calculations, labeled $j=0\ldots N-1$, each with a spacing $\Delta x /
+2^j$. That gives us a series:
+\begin{eqnarray}
+\hat I_0 &=& I + \epsilon_0 \left(\Delta x\right)^2 + 
+\epsilon_1 \left(\Delta x\right)^4 + 
+\epsilon_2 \left(\Delta x\right)^6 + \ldots \cr
+\hat I_1 &=& I + \frac{1}{4} \epsilon_0 \left(\Delta x\right)^2 + 
+\frac{1}{16} \epsilon_1 \left(\Delta x\right)^4 + 
+\frac{1}{64} \epsilon_2 \left(\Delta x\right)^6 + \ldots \cr
+&\ldots& \cr
+\hat I_{N-1} &=& I + \frac{1}{2^{2N}} \epsilon_0 \left(\Delta x\right)^2 + 
+\frac{1}{2^{4N}} \epsilon_1 \left(\Delta x\right)^4 + 
+\frac{1}{2^{6N}} \epsilon_2 \left(\Delta x\right)^6 + \ldots
+\end{eqnarray}
+Our goal will be to determine $I$. We can't determine it
+independently, or at the highest possible precision, but the series of
+$N$ measurements allows us to make an approximation that retains just
+$N$ unknowns and solve for all of them, including $I$. The
+approximation is to cut off the series:
+\begin{eqnarray}
+\hat I_0 &=& \hat I + \epsilon_0 \left(\Delta x\right)^2 + 
+\epsilon_1 \left(\Delta x\right)^4 + 
+\epsilon_2 \left(\Delta x\right)^6
++ \ldots + \epsilon_{N-2} \left(\Delta x \right)^{2(N-1)}\cr
+\hat I_1 &=& \hat I + \frac{1}{4} \epsilon_0 \left(\Delta x\right)^2 + 
+\frac{1}{16} \epsilon_1 \left(\Delta x\right)^4 + 
+\frac{1}{64} \epsilon_2 \left(\Delta x\right)^6 + 
++ \ldots + \frac{1}{2^{2(N-1)}} \epsilon_{N-2} \left(\Delta x \right)^{2(N-1)}\cr
+&\ldots& \cr
+\hat I_{N-1} &=& \hat I + \frac{1}{2^{2N}} \epsilon_0 \left(\Delta x\right)^2 + 
+\frac{1}{2^{4N}} \epsilon_1 \left(\Delta x\right)^4 + 
+\frac{1}{2^{6N}} \epsilon_2 \left(\Delta x\right)^6 + \ldots
++ \ldots + \frac{1}{2^{2(N-1)(N-1)}} \epsilon_{N-2} \left(\Delta x \right)^{2(N-1)}
+\end{eqnarray}
+where $\hat I$ represents an estimate of the integral with all error
+terms up to $\Delta x^{2(N-1)}$ canceled, i.e. with error terms of
+order $\Delta x^{2N-1}$: 
+\begin{equation}
+\hat I = I + \epsilon_{N-1} \left(\Delta x\right)^{2N-1}
++ \epsilon_{N} \left(\Delta x\right)^{2N} + \ldots
+\end{equation}
+The set of equations above forms a linear system with $N$ equations
+and $N$ unknowns, which are $\{\hat
+I, \epsilon_0, \epsilon_1, \ldots, \epsilon_{N-2}\}$. With the
+substitution $y_k=(\Delta x)^2/2^{2k}$, we can rewrite the equations as: 
+\begin{eqnarray}
+\hat I_0 &=& \hat I +
+\epsilon_0 y_0 + 
+\epsilon_1 y_0^2 +
+\epsilon_2 y_0^3
++ \ldots + \epsilon_{N-2} y_0^{N-1}\cr
+\hat I_1 &=& \hat I + 
+\epsilon_0 y_1 + 
+\epsilon_1 y_1^2 +
+\epsilon_2 y_1^3
++ \ldots + \epsilon_{N-2} y_1^{N-1}\cr
+&\ldots& \cr
+\hat I_{N-1} &=& \hat I +
+\epsilon_0 y_{N-1} + 
+\epsilon_1 y_{N-1}^2 +
+\epsilon_2 y_{N-1}^3
++ \ldots + \epsilon_{N-2} y_{N-1}^{N-1}
+\end{eqnarray}
+Rewriting as a matrix equation:
+\begin{equation}
+\left(\begin{array}{ccccc}
+1 & y_0 & y_0^2 & \ldots & y_0^{N-1} \cr
+1 & y_1 & y_1^2 & \ldots & y_1^{N-1} \cr
+1 & y_2 & y_2^2 & \ldots & y_2^{N-1} \cr
+\ldots & \ldots & \ldots & \ldots & \ldots \cr
+1 & y_{N-1} & y_{N-1}^2 & \ldots & y_{N-1}^{N-1} \cr
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+\hat I \cr
+\epsilon_0 \cr
+\epsilon_1 \cr
+\ldots \cr
+\epsilon_{N-2}
+\end{array}\right)
+= 
+\left(\begin{array}{c}
+\hat I_0 \cr
+\hat I_1 \cr
+\hat I_2 \cr
+\ldots \cr
+\hat I_{N-1}
+\end{array}\right)
+\end{equation}
+Now the strategy is apparent! We take a sequence of trapezoid
+estimates of decreasing step size, and then fit the sequence of
+integral estimates to a polynomial model in $y$. The first coefficient
+ends up being the integral estimate with only error terms of order
+$\Delta x^{2N-1}$ and higher.
+
+You will usually see this described as ``the integral estimate
+extrapolated to zero step size,'' which is true-ish, in the sense that
+you evaluate the polynomial in $y$ at $y=\Delta x=0$. But to me that
+description obscures how you have determined the coefficients of the
+polynomial.
+
+However, we do not generally want to solve this matrix equation
+through a large matrix inversion---that will get expensive fast! As we
+will learn later, the matrix inversion takes $\mathcal{O}(N^3)$ time
+typically.  Instead, we use the same techniques we used in
+interpolation, and we evaluate:
+\begin{equation}
+f(y=0) = \sum_{i=0}^{N-1} W(y=0, y_i) \hat I_i
+\end{equation}
+where:
+\begin{equation}
+W(y, y_i) = \prod_{j\ne i} \frac{y - y_j}{y_i - y_j}
+\end{equation}
+Proceeding with this calculation, we find: 
+\begin{eqnarray}
+W(0, y_i) &=& \prod_{j\ne i} \frac{y - y_j}{y_i - y_j} \cr
+ &=& \prod_{j\ne i} \frac{- 1}{y_i / y_j - 1} \cr
+ &=& \prod_{j\ne i} \frac{- 1}{2^{2j} / 2^{2i} - 1} \cr
+ &=& \prod_{j\ne i} \frac{1}{1 - 2^{2(j-i)}}
+\end{eqnarray}
+
+So for $N=1$, our integral estimate is:
+\begin{equation}
+\hat I = W(y=0, y_0) \hat I_0 = \hat I_0
+\end{equation}
+And for N=2, it becomes:
+\begin{eqnarray}
+\hat I &=& W(y=0, y_0) \hat I_0 + W(y=0, y_1) \hat I_1 \cr
+&=& \frac{1}{1 - 2^{2(1-0)}} \hat I_0 + \frac{1}{1 - 2^{2(0-1)}}\hat I_1 \cr
+&=& - \frac{1}{3} \hat I_0 + \frac{1}{1 - \frac{1}{4}}\hat I_1 \cr
+&=& - \frac{1}{3} \hat I_0 + \frac{4}{3}\hat I_1
+\end{eqnarray}
+Ta da! Simpson's rule again.
+
+To round things out in terms of implementation, when we add the $N$th
+refinement to the integration, this multiplies another factor into
+each term $i$, which will be:
+\begin{equation}
+\frac{1}{1 - 2^{2(N-i)}}
+\end{equation}
+and it adds another term $\hat I_N$, which will be multiplied by:
+\begin{equation}
+W(0, y_N) = \prod_{j<N} \frac{1}{1 - 2^{j-N}}
+\end{equation}
+This leads to a very simple way to implement Romberg.
 
 These methods are good methods, but it turns out we can be even
 cleverer. But before we do so, we have a little bit of work to do.

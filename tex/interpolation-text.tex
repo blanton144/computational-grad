@@ -1,0 +1,179 @@
+\title{Interpolation}
+
+\section{What is interpolation?}
+
+Interpolation a process which, given function values (plus perhaps
+noise) for some set of given locations, can return estimates of the
+function values at any other location.
+
+Here I will discuss the case that we want the interpolating function
+to pass exactly through the given points. Approximate interpolation is
+closely related, but is better thought of in the context of
+curve-fitting. I will also use a linear framework, by which I mean
+that the interpolation function can be written as a linear sum of the
+sample values:
+\begin{equation}
+\hat f(x) = \sum_i W(x, x_i) f(x_i)
+\end{equation}
+(Not to be confused with linear interpolation!).
+
+Thus we can think of the interpolation as determining not just values
+at a bunch of new points, but as a whole continuous function.  This is
+useful for example if the interpolating function is integrable,
+meaning we can use the same interpolation to determine integrals.
+
+\section{Linear Interpolation}
+
+Linear interpolation is the simplest case. It has a number of
+drawbacks, but it illustrates several principles usefully. 
+
+The basic idea is that if you have some equally spaced set $\{x_i\}$
+with known function values $\{f(x_i)\}$, and you want to interpolate
+$f(x)$ to some value $x$, you find which paid of $x_i$ and $x_{i+1}$
+brackets $x$, and then:
+\begin{equation}
+\hat f(x) = f(x_i) + \left[f(x_{i+1}) - f(x_i)\right] \frac{x -
+x_i}{x_{i+1} - x_i}
+\end{equation}
+
+This is pretty intuitive. It corresponds to:
+\begin{equation}
+W(x, x_i) = 1 - |x - x_i|
+\end{equation}
+for $-1< (x-x_i) < 1$, and zero otherwise. That is, it is the
+triangular function.
+
+In addition, $\hat f(x)$ it can also be thought of as a sum of basis
+functions $B_i$ with coefficients $a_i$:
+\begin{equation}
+\hat f(x) = \sum_i a_i B_i(x)
+\end{equation}
+
+In this case $B_i(x) = W(x, x_i)$ but this does not hold in general!
+
+\section{Fitting Basis Coefficients}
+
+Let's use this approach to think a little more generally about fitting
+an interpolating function with a basis set.  We have a set of points
+$f(x_j)$, and a set of equations to satisfy:
+\begin{equation}
+f(x_j) = \sum_i a_i B_i(x_j)
+\end{equation}
+This can be written as a matrix equation:
+\begin{equation}
+\vec{f} = \mat{B}\cdot \vec{a}
+\end{equation}
+which can be solved for $\vec{a}$, e.g. 
+\begin{equation}
+\vec{a} = \mat{B}^{-1}\cdot \vec{f}
+\end{equation}
+or alternatively written:
+\begin{equation}
+a_i = \sum_j {B}^{-1}_{ij} f(x_j)
+\end{equation}
+This inverse exists as long as the basis vectors are independent and
+have support where your samples are.
+
+Then the interpolating function is:
+\begin{eqnarray}
+\hat f(x) &=& \sum_i a_i B_i(x) \cr
+&=& \sum_i B_i(x) \sum_j B^{-1}_{ij} f(x_j)
+\end{eqnarray}
+That is to say,
+\begin{equation}
+W(x, x_i) = B_i(x) \sum_j B^{-1}_{ij}
+\end{equation}
+
+In the case of linear interpolation, the matrix $B_i(x_j)$ is trivial,
+it is just the identity matrix, so $\vec{a} = \vec{f}$. That is why
+the weights $W(x, x_i)$ are equal to the basis functions $B_i(x)$.
+But this need not be the case.
+
+\section{Polynomial Basis Interpolation}
+
+Another possible interpolation basis is the space of polynomials.
+\begin{eqnarray}
+B_0(x) &=& 1 \cr
+B_1(x) &=& x \cr
+B_2(x) &=& x^2 \cr
+&\ldots&
+\end{eqnarray}
+This interpolation basis leads to the same equation as above, but now
+the matrix $B_{ij} = B_i(x_j)$ is a dense matrix. 
+
+A brief note on numerical stability. Often your independent variable's
+natural units will not be of order unity. E.g. maybe you are doing
+something where a wavelength of light in the optical is reported in
+Angstroms, so $\lambda \sim 5000$. In this case, you do not want to
+use the raw independent variable for a high order fit. If I fit a 9th
+order polynomial in this case, then $\lambda^7 \sim 10^{33}$, which
+will overflow 32-bit bounds. It will also lead to a poorly conditioned
+$K_{ij}$ matrix. You can avoid this specific case with 64-bit
+precision, but this will be slower and take more memory, and in any
+case the problem still can occur under the right circumstances.
+
+Without any penalty, you can perform the same interpolation by first
+rescaling $x\rightarrow x'$ where $x'$ is limited to values of order
+unity, so that powers of $x'$ stay closer to unity. There might under
+certain circumstances be a greater chance of {\it underflow} in this
+case, but not necessarily, and in any case there is a greater dynamic
+range below zero than above, because of the existence of subnormal
+numbers. 
+
+As long as you are rescaling the $x$ limits, a good choice is to
+rescale from $-1$ to $1$. In that case you can also change your
+polynomial basis to Legendre polynomials, which are complete basis
+over that range. This choice will lead to better conditioned
+matrices.
+
+Although you can do the matrix inversion for the polynomial basis
+numerically, there is in fact an analytic solution for the weights,
+which are as it turns out the Lagrange polynomials:
+\begin{equation}
+W(x, x_i) = \prod_{j\ne i} \frac{x - x_j}{x_i - x_j}
+\end{equation}
+You can kind of guess these from the fact that they need to have the
+property that at each data point all of the polynomials except for one
+should have a node. 
+
+Note that at higher orders, the polynomial interpolator becomes pretty
+poorly behaved. But the polynomial basis will be an important one as
+we think about methods in integration and differentiation. The
+particular choice of Legendre polynomials also will form the basis
+later for the method of Gaussian quadrature.
+
+\section{Fourier Basis Interpolation}
+
+We can also consider the Fourier basis. This---or methods close to
+it---can be appropriate, especially if you are interpolating equally
+spaced points. 
+
+If you consider a continuous set of basis functions:
+\begin{equation}
+B_\omega = \frac{1}{\sqrt{2\pi}} \exp\left( i\omega x\right)
+\end{equation}
+and for uniform sampling, with $|\omega|$ limited by the sampling
+rate, you can find:
+\begin{equation}
+W(x, x_i) = \frac{1}{2\pi} \int_{-\pi}^{\pi} {\rm
+d}\omega \exp\left[i\omega(x - x_i)\right] =
+\frac{\sin\left[\pi(x - x_i)\right]}{\pi(x- x_i)} = {\rm sinc}(x-x_i)
+\end{equation}
+
+Under certain (rarely satisfied) conditions this set of weights is
+{\it perfect}. If the underlying function has no power in its Fourier
+spectrum beyond the Nyquist frequency, and your grid is very large
+(well \ldots infinite) then you have fully determined the function
+with your sampling and the interpolation is exact. Note that there is
+also a version of this interpolation for a finite grid, using the
+discrete Fourier basis, which isn't quite as restrictive.
+
+A more commonly used approach, called Lanczos interpolation or
+resampling, is to modify this set of interpolation weights slightly:
+\begin{equation}
+W(x, x_i) = {\rm sinc}(x - x_i)\, {\rm sinc}\left[(x-x_i)/a\right],
+\end{equation}
+where typically $a=2, 3,$ or 4 (and is always an integer) and
+$W(x,x_i)=0$ for $|x-x_i|>a$. 
+
+
