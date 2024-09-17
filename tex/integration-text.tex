@@ -627,8 +627,10 @@ So:
 Since $r(x)$ is an $N-1$-degree polynomial or less, there is a way to
 integrate the function with $N$ points or less, as we found above.
 
-The locations of these points can be found as follows. The integral is
-now known to be writable as:
+But can't integrate $r(x)$ directly---we can only evaluate the
+function $f(x)$. Luckily our factorization allows us to choose points
+for which $r(x)=f(x)$---that happens at the roots of $P_N(x)$. The
+integral is now known to be writable as:
 \begin{equation}
 \int_{-1}^{1} {\rm d}x f(x) = \sum_{i=0}^{N-1} w_i f(x_i) =
 \sum_{i=0}^{N-1} w_i q(x_i) P_N(x_i) + 
@@ -638,24 +640,38 @@ If we choose the points $x_i$ to be the $N$ roots of the Legendre
 polynomial of order $N$, then:
 \begin{equation}
 \int_{-1}^{1} {\rm d}x f(x) = \sum_{i=0}^{N-1} w_i r(x_i)
+= \sum_{i=0}^{N-1} w_i f(x_i)
 \end{equation}
 where:
 \begin{equation}
 r(x) = \sum_{j=0}^{N-1} \alpha_j x^j
 \end{equation}
-This is great, and we also know how to set the $w_i$. These are
-derived in the same way as for Simpson's rule.
-Using the appropriate
-linear set of equations analogous to Equation \ref{eq:weights}, you
-can express the solution for the coefficients $\alpha_j$ in terms of
-values of the function $f(x_i)$, which by design is equal to $r(x_i)$
-at the chosen points, and then given the closed form of the integral 
-of the polynomial, this translates into a form for $w_i$. We can
-proceed as follows.
+Now in principle we can write:
+\begin{equation}
+f(x_i) = r(x_i) = \sum_{j=0}^{N-1} \alpha_j x_i^j
+\end{equation}
+which is another case of interpolating a polynomial! We could
+determine $r(x)$ this way:
+\begin{equation}
+r(x) = \sum_{j=0}^{N-1} W(x, x_i) f(x_i)
+\end{equation}
+for the same definition of $W$ as in the discussion of interpolation
+and in Romberg integration. But that's not the best way to get its
+{\it integral}. 
+
+Instead we proceed as follows to determine the $w_i$ values, without
+bothering to determine $r(x)$ or the $\alpha_j$s explicitly. We know
+the following:
 \begin{eqnarray}
-\int_{-1}^{1} {\rm d}x f(x) &=& \sum_{i=0}^{N-1} w_i r(x_i)\cr
+\int_{-1}^{1} {\rm d}x f(x) &=& \sum_{i=0}^{N-1} w_i r(x_i)
+\end{eqnarray}
+which is equivalent to:
+\begin{eqnarray}
 \int_{-1}^{1} {\rm d}x r(x) &=& \sum_{i=0}^{N-1} w_i
-\sum_{j=0}^{N-1} \alpha_{j} x_i^{j}\cr
+\sum_{j=0}^{N-1} \alpha_{j} x_i^{j}
+\end{eqnarray}
+Performing the integral at left explicitly leads to:
+\begin{eqnarray}
 \sum_{j=0}^{N-1} \frac{\alpha_j}{j!} \left[(1)^{j+1} -
 (-1)^{j+1}\right] &=& \sum_{i=0}^{N-1} w_i 
 \sum_{j=0}^{N-1} \alpha_{j} x_i^{j}\cr
@@ -666,11 +682,18 @@ proceed as follows.
 x_i^{j}
 \end{eqnarray}
 Since this has to hold for {\it all} choices of $\alpha_j$, this leads
-to a set of $N$ equations for the $N$ unknown $w_i$ values, from which
-the $w_i$ can be determined. As it happens, the set of $w_i$ that
-solve this set of equations are:
+to a set of $N$ equations for the $N$ unknown $w_i$ values:
+\begin{eqnarray}
+\sum_{j=1,3,\ldots}^{N-1} \frac{2}{j!} &=&
+\sum_{{j}=0}^{N-1}
+\sum_{i=0}^{N-1} w_i 
+x_i^{j}
+\end{eqnarray}
+From this matrix equation the $w_i$ can be determined. A non-obvious
+mathematical fact is that the set of $w_i$ that solve this set of
+equations, when $x_i$ are the roots of $P_N$, are:
 \begin{equation}
-w_i = \frac{2}{\left(1-x_i^2\right) \left(P_n'(x_i)\right)^2}
+w_i = \frac{2}{\left(1-x_i^2\right) \left(P_N'(x_i)\right)^2}
 \end{equation}
 
 The notebook shows an implementation given the weights and locations
