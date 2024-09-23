@@ -39,3 +39,4 @@ class project. The individual projects are below:
 | [2D Ising Model](pdf/project-ising.pdf) | 
 | [Solitons in the Korteweg and deVries Equation](pdf/project-soliton.pdf) | 
 | [Hydrodynamics](pdf/project-hydro.pdf) | 
+| [Stellar Structure](pdf/project-stellar-structure.pdf) | 

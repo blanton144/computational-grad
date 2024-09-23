@@ -16,10 +16,9 @@ consider these equations not as a function of radius, but as a
 function of enclosed mass within the radius.
 
 A good introduction to the background behind the equations can be
-found in
-\href{http://www.ast.cam.ac.uk/~pettini/STARS/Lecture09.pdf}{\color{blue}
-  these lecture notes}. To summarize, for a star with energy transport
-dominated by radiative diffusion:
+found in lecture notes from Max Pettini that I will supply
+separately. To summarize, for a star with energy transport dominated
+by radiative diffusion:
 \begin{eqnarray}
 \frac{\dd{r}}{\dd{m}} &=& \frac{1}{4\pi r^2 \rho} \cr
 \frac{\dd{P}}{\dd{m}} &=& -G \frac{m}{4\pi r^4} \cr
@@ -57,17 +56,16 @@ P = \frac{\rho kT}{\mu m_p}
 where $\mu$ is the mean molecular weight in units of proton masses,
 and is 0.6.
 
-The parameters of the system that are not physical constants are
+The parameters of the system that are not just physical constants are
 $M_\ast$, $\kappa_0$,  and $\mathcal{E}_0$.
 
 \section{Prep work}
 
 \begin{itemize}
 \item Recast the above equations into a form with the minimum number
-  of independent, unitless parameters.  You should perform your
-  numerical analysis in these variables, and then scale your solution
-  after the fact to specific physical solutions.
-\item {\bf polytrope solution}
+  of independent parameters.  You should perform your numerical
+  analysis in these variables, and then scale your solution after the
+  fact to specific physical solutions.
 \end{itemize}
 
 \section{Creating the integrator}
@@ -84,7 +82,8 @@ $M_\ast$, $\kappa_0$,  and $\mathcal{E}_0$.
 
 \begin{itemize}
 \item Plot $\rho$, $P$, $T$, $L$ and $\mathcal{E}$ as a function of
-  enclosed radius for some choice of $M_\ast$.
+  enclosed radius for some choices of $M_\ast$.
+\item Determine the relationships between $L$, $R$, and $M_\ast$.
 \item Given the Solar values of mass and luminosity, can you determine
   some combination of $\kappa_0$ and $\mathcal{E}_0$?
 \end{itemize}
