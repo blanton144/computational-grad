@@ -468,9 +468,9 @@ r^2 &=& \left|\mat{A}\cdot\left(\vec{x}
  - \mat{1}\right)\cdot\mat{U}^T\cdot\vec{b}
 + \mat{U}^T\vec{b}'\right|^2
 \end{eqnarray}
-I don't think this argument from NR is correct, since this residual
-will be zero for a non-single matrix.
-
+The left term is non-zero only along components with $w_j=0$ and the
+right term only along components with $w_j\ne 0$, so $\vec{b}'=0$
+minimizes the residual.
 
 Therefore, the inverse with the conversion of $w_j = 0\rightarrow
 1/w_j = 0$ yields what we usually want in all cases. It is known as
