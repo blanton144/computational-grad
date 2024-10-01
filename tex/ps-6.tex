@@ -5,19 +5,14 @@
 \begin{document}
 
 \title{\bf Computational Physics / PHYS-GA 2000 / Problem Set \#6
-\\ Due October 31, 2023 }
+\\ Due October 15, 2024 }
 
 You {\it must} label all axes of all plots, including giving the {\it
   units}!!
 
+Read all the instructions of this one before beginning it.
+
 \begin{enumerate}
-%\item Calculate derivative of the function:
-  %\begin{equation}
-    %f(x) = \frac{1}{\sqrt{2\pi}} \exp\left(-x^2/2\right)
-  %\end{equation}
-  %three ways: (a) analytically; (b) with second-order finite
-  %difference; and (c) with {\tt autodiff} using the {\tt jax}
-  %implementation. Compare the results, and also compare the speeds.
 \item Here we will perform a simple Principal Components Analysis on a
   real data set. Note this problem is not as daunting as it might look
   at first; there are many words because I am walking you through all
@@ -51,10 +46,7 @@ You {\it must} label all axes of all plots, including giving the {\it
       meaningful. First, all of these galaxies are at different
       distances, so their fluxes span a large dynamic range; so first
       normalize all the fluxes so their integrals over wavelength are
-      the same. It is close enough to sum over the values to estimate
-      the integral (i.e. don't worry about the fact that
-      $\Delta\lambda$ varies across the grid). Keep each normalization
-      available.
+      the same. Keep each normalization available.
      \item Second, the mean flux at every wavelength is positive; this
        will mean that a PCA will spend an eigenvector to explain the
        mean offset from zero. Instead, we will first subtract off the
@@ -118,11 +110,16 @@ You {\it must} label all axes of all plots, including giving the {\it
        just have to rotate the spectra into the eigenspectrum basis.
      \item Plot $c_0$ vs $c_1$ and $c_0$ vs $c_2$.
      \item Now try varying $N_c =1,2,\ldots, 20$ and calculate the
-       squared fractional residuals between the spectra and the
+       squared residuals between the spectra and the
        reconstituted, approximate spectra as a function of $N_c$. You
        should see the squared residuals declining. How small is the
-       fractional error for $N_c =20$?
+       root-mean squared residual for $N_c =20$?
   \end{enumerate}
 \end{enumerate}
+
+Please note: if you run into memory trouble while you are working on
+this problem, first try performing everything with a subset of the
+spectra (say, 500 of them) instead of the full data set. However, most
+machines today should be able to handle the full problem. 
 
 \end{document}
