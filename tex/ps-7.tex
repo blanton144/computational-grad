@@ -5,54 +5,26 @@
 \begin{document}
 
 \title{\bf Computational Physics / PHYS-UA 210 / Problem Set \#7
-\\ Due October 29, 2023 }
+\\ Due October 29, 2024 }
 
 You {\it must} label all axes of all plots, including giving the {\it
   units}!!
 
 \begin{enumerate}
+\item Exercise 6.16 in Newman. But first, replace $\omega^2$ with the
+  correct expression based on $M$, $m$, and $R$ (it is unclear to me
+  why this is treated as a separate independent parameter!). Then
+  rescale the equation so it only depends on $m' = m/M$ and $r'=r/R$.
+  Write the code to take any values of those two parameters; you will
+  have to carefully write the initial bracketing code. Either use {\tt
+    jax} or an analytic derivative, and use Newton's method. Solve,
+  with the same routine but with different inputs, the problem for
+  values appropriate to the Moon and the Earth, the Earth and the Sun,
+  and for the case of a Jupiter-mass planet orbiting the Sun at the
+  distance of the Earth.
 \item Implement Brent's 1D minimization method. Test it on this
 function: $y= (x -0.3)^2 \exp(x)$. Compare to the {\tt
 scipy.optimize.brent} implementation results.
-\item We will do a simple likelihood maximization problem. Let's say
-  you do a survey of the population, asking people a simple yes or no
-  question, namely ``Do you recognize the phrase `Be Kind, Rewind',
-  and know what it means?'' You have a hypothesis that whether people
-  answer yes should depend on age. The standard way people analyze the
-  results to look for a correlation in situations like this is
-  something called {\it logistic regression.} You model the
-  probability as the logistic function:
-  \begin{equation}
-    p(x) = \frac{1}{1+ \exp\left[-(\beta_0 + \beta_1 x)\right]}
-  \end{equation}
-  where in this case $x$ represents the age.  You'll see that
-  $p(x)=0.5$ at $-\beta_0/\beta_1$ and the slope there is $1/\beta_1$.
-  Then the likelihood for each resulting value is $p({\rm age})$ if
-  the answer is ``yes'' and $1 - p({\rm age})$ if the answer is
-  ``no.''  Use
-  \href{https://github.com/blanton144/computational-grad/blob/main/data/survey.csv}{this
-    data}, which gives the age of the respondent in years and their
-  answer to the question, where ``1'' means yes and ``0'' means
-  no. Note this is {\it not} from a real survey!!  Find the maximum
-  likelihood values and formal errors and covariance matrix of
-  $\beta_0$ and $\beta_1$. Plot the logistic model and the answers on
-  the same plot. Some points to keep in mind:
-  \begin{itemize}
-    \item Using {\tt jax}'s {\tt autodiff} really helps for both the
-      gradient and the Hessian calculation. 
-    \item Remember you want to minimize the negative log likelihood.
-    \item Be careful about machine precision---you need to calculate
-      the log likelihood in such a way that you are never taking the
-      log of zero, which if you are not careful you can easily do.
-  \end{itemize}
-  Do the answers make any sense?
-
-  Note that although this logistic function regression is {\it
-    standard} for problems where you are looking for a relationship
-  between the probabilities from a bunch of 0s and 1s, just like
-  fitting a line to data points is standard, that doesn't mean the
-  logistic function is always the most sensible or correct model.
-  (Though by construction it is in {\it this} case).
 \end{enumerate}
 
 
