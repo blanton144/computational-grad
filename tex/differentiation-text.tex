@@ -303,7 +303,7 @@ large set of situations can scale our results to that new situation.
 Specifically we can redefine:
 \begin{eqnarray}
 r' &=& \frac{r}{R_\odot} \cr
-t' &=& \sqrt{\frac{GM_\odot}{R_\odot}}
+t' &=& \frac{t}{t_0} = \frac{t}{\sqrt{GM_\odot/ R_\odot^3}}
 \end{eqnarray}
 and we find:
 \begin{equation}
@@ -321,5 +321,58 @@ to a different length scale $R_{\rm new}$ and mass $M_{\rm new}$
 through the above equations, instead of recalculating the whole
 problem.
 
+Note that we didn't define a special velocity scaling. Clearly all
+velocities will scale as $R_\odot / t_0$. One you have defined the
+scaling for all the linearly independent units, the other scalings
+will follow.
+
 Pulling the dimensions out of a problem like this is a generic
 strategy in numerical physics.
+
+Another example with which you may be more familiar is from
+hydrodynamics.  Take the Navier-Stokes equation, which is appropriate
+for incompressible fluids:
+\begin{equation}
+\frac{\partial \vec{v}}{\partial t}
++ \left(\vec{v}\cdot\vec\nabla\right)\vec{v} =
+- \frac{1}{\rho} \vec\nabla p + \nu \nabla^2 \vec{v}
+\end{equation}
+In this case we will use a typical length scale $L$ and a typical
+velocity scale $V$. The typical time scale is then $L/V$. Pressure is
+in units of:
+\begin{equation}
+\frac{\mathrm{mass} \times \mathrm{length}}
+{\mathrm{time}^2 \times \mathrm{area}} =
+\frac{\mathrm{density} \times \mathrm{length}^2}
+{\mathrm{time}^2}
+\end{equation}
+So the dimensional scaling is as $\rho V^2$.
+Then:
+\begin{eqnarray}
+\vec{v}' &=& V \vec{v} \cr
+\vec\nabla' &=& L \vec\nabla \cr
+t' &=& \frac{V}{L} t \cr
+p' &=& \frac{p}{\rho V^2}
+\end{eqnarray}
+and we can rewrite Navier-Stokes as:
+\begin{equation}
+\frac{\partial \vec{v}'}{\partial t'}
++ \left(\vec{v}'\cdot\vec\nabla'\right)\vec{v}' =
+- \vec\nabla' p' + \frac{\nu}{L V} \nabla'^2 \vec{v}'
+\end{equation}
+We can't get rid of $\nu$ entirely, because it is an independent
+quality of the fluid. But we can see that what matters to the form of
+the solution is not $\nu$, but the combination $\nu/LV$. This is
+usually rewritten as the Reynold's number $\mathit{Re} = LV / \nu$,
+and then:
+\begin{equation}
+\frac{\partial \vec{v}'}{\partial t'}
++ \left(\vec{v}'\cdot\vec\nabla'\right)\vec{v}' =
+- \vec\nabla' p' + \frac{1}{\mathit{Re}} \nabla'^2 \vec{v}'
+\end{equation}
+The power of this is that we see that the nature of the solution
+depends just on the Reynold's number. So you might be studying the
+currents in a swimming pool or in a teacup, you can rescale one to the
+other as long as the Reynold's numbers are the same. Instead of time,
+length scale, and viscosity being independent parameters, they come
+in only in this combination.
