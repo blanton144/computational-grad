@@ -18,7 +18,7 @@ ALL= \
 	$(PDFDIR)/ps-7.pdf \
 	$(PDFDIR)/ps-8.pdf \
 	$(PDFDIR)/ps-9.pdf \
-	$(PDFDIR)/ps-11.pdf \
+	$(PDFDIR)/ps-10.pdf \
 	$(PDFDIR)/fft.pdf \
 	$(PDFDIR)/fft-answers.pdf \
 	$(PDFDIR)/boundary.pdf \
