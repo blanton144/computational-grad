@@ -22,6 +22,7 @@ Lecture notes and associated information:
 | ODEs | [notes](pdf/ode.pdf) | [notes with answers](pdf/ode-answers.pdf)| [Jupyter solutions](https://nbviewer.jupyter.org/github/blanton144/computational-grad/blob/main/docs/notebooks/ode.ipynb) | 
 | PDE (initial value) | [notes](pdf/pde.pdf) | [notes with answers](pdf/pde-answers.pdf)| [Jupyter solutions](https://nbviewer.jupyter.org/github/blanton144/computational-grad/blob/main/docs/notebooks/pde.ipynb) | 
 | PDE (boundary value) | [notes](pdf/boundary.pdf) | [notes with answers](pdf/boundary-answers.pdf)| [Jupyter solutions](https://nbviewer.jupyter.org/github/blanton144/computational-grad/blob/main/docs/notebooks/boundary.ipynb) | 
+| MCMC | [notes](pdf/mcmc.pdf) | [notes with answers](pdf/mcmc-answers.pdf)| [Jupyter solutions](https://nbviewer.jupyter.org/github/blanton144/computational-grad/blob/main/docs/notebooks/mcmc.ipynb) | 
 
 Problem sets: 
 

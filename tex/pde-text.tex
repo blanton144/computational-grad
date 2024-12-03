@@ -369,9 +369,71 @@ Then the conditions of stability for all $k$ become:
 \end{equation}
 i.e. the Courant condition again.
 
-\section{Central in Time Methods}
+For nonlinear problems, the leapfrog method can lead to
+mesh-drifting.
 
-{\bf Note that this is more stable}
+\section{Lax-Wendroff}
+
+A more stable, but hardly foolproof approach, is the two-step
+Lax-Wendroff method. This is a slight variation on leapfrog. The
+normal construction of this is to take a half-step that is Lax-like,
+but interpolated onto the half-integer locations, and a full step
+centered on the half-step. This is second order in time and by
+introducing coupling between the two grids, can be more well-behaved
+than leapfrog in nonlinear equations.
+
+The steps look like:
+\begin{eqnarray}
+ q^{n+1/2}_{j+1/2} &=&
+   \frac{1}{2} \left(q^{n}_{j} + q^{n}_{j+1}\right)
+   - \frac{\Delta t}{2 \Delta x}
+    \left(F^{n}_{j+1} - F^{n}_{j}\right) \cr
+ q^{n+1}_{j} &=&
+   q^{n}_j 
+   - \frac{\Delta t}{\Delta x}
+    \left(F^{n+1/2}_{j+1/2} - F^{n+1/2}_{j-1/2}\right)
+\end{eqnarray}
+This leads to a diffusive term, but this is less problematic than in
+the regular Lax method.
+
+For example, in the advective equation, the update looks like:
+\begin{equation}
+ q^{n+1}_{j} = q^n_j -
+ \frac{\alpha}{2}
+ \left[ \left(q^n_{j+1} + q^n_j\right)
+ - \alpha \left(q^n_{j+1} - q^n_{j}\right)
+ - \left(q^n_{j} + q^n_{j-1}\right)
+ + \alpha \left(q^n_{j} - q^n_{j-1}\right) \right]
+\end{equation}
+with $\alpha = v \Delta t / \Delta x $. Then:
+\begin{equation}
+ q^{n+1}_{j} = q^n_j -
+ \frac{\alpha}{2}
+ \left[ (1-\alpha) q_{j+1}^n + 2\alpha q_j - (1 + \alpha) q_{j-1}^n \right]
+\end{equation}
+Then the stability analysis will yield:
+\begin{eqnarray}
+ \xi &=& 1 - \alpha
+  \left[ i \sin k\Delta x + \alpha - \alpha \cos k\Delta x\right] \cr
+  &=& 1 - i \alpha \sin k \Delta x
+   - \alpha^2(1 - \cos k \Delta x)
+\end{eqnarray}
+And then:
+\begin{eqnarray}
+ |\xi|^2 &=& 
+   \left[1 - \alpha^2 \left(1 - \cos k\Delta x\right)\right]^2
+   + \alpha^2 \sin^2 k \Delta x \cr
+  &=& 1 - 2\alpha^2 \left(1 - \cos k \Delta x\right)
+    + \alpha^4  \left(1 - \cos k \Delta x\right)^2 + \alpha^2 \sin^2
+   k \Delta x \cr
+  &=& 1 - 2\alpha^2 + 2 \alpha^2 \cos k \Delta x
+    + \alpha^4  \left(1 - \cos k \Delta x\right)^2 + \alpha^2
+    \left( 1 - \cos^2 k \Delta x \right)\cr
+  &=& 1 - \alpha^2 (1 - \cos k \Delta x)^2  
+    + \alpha^4  \left(1 - \cos k \Delta x\right)^2 \cr
+  &=& 1 - \alpha^2 (1 - \alpha^2) (1 - \cos k \Delta x)^2  
+\end{eqnarray}
+
 
 \section{Diffusion Equation}
 
